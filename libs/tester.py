@@ -16,11 +16,12 @@ def get_tester_base_info(tester_id):
     sql = """
         SELECT
         tester.tester_id,
-        tester.name
+        tester.name,
+        tester.email
         FROM
         tester
         WHERE
-        tester.tester_id = "%i";
+        tester.tester_id = "%i"
     """ % tester_id
 
     # 获取测试基础信息

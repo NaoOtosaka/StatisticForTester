@@ -1,32 +1,27 @@
 from flask import Flask
 from flask_cors import CORS
 
-from app.v1 import Project, Tester
-
-
-def resign_blueprint(flask_server):
-    """
-    注册蓝图
-    :param flask_server:
-    :return:
-    """
-    flask_server.register_blueprint(Project.project_api)
-    flask_server.register_blueprint(Tester.tester_api)
+from config import CONF
+from app.manager import api_v1
 
 
 def setup(flask_server):
     """
-    设置启动参数
+    设置启动
     :param flask_server:
     :return:
     """
-    flask_server.run(port=9222, debug=True, host="0.0.0.0")
+    # 跨域处理
+    CORS(server, supports_credentials=True)
+
+    # 注册API蓝图
+    server.register_blueprint(api_v1)
+
+    # 启动参数
+    flask_server.run(port=CONF.API_PORT, debug=CONF.DEBUG, host=CONF.API_HOST)
 
 
 if __name__ == '__main__':
     server = Flask(__name__)
-    CORS(server, supports_credentials=True)
-
-    resign_blueprint(server)
 
     setup(server)

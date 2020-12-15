@@ -20,7 +20,7 @@ def get_tester_base_info(tester_id):
         FROM
         tester
         WHERE
-        tester.tester_id = "%i"
+        tester.tester_id = "%i";
     """ % tester_id
 
     # 获取测试基础信息
@@ -55,7 +55,7 @@ def get_tester_list():
         tester.name,
         tester.email
         FROM
-        tester
+        tester;
         """
     temp = []
 

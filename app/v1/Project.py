@@ -6,15 +6,15 @@ from libs.project import *
 
 
 # 实例化蓝图
-project_api = Blueprint('project', __name__)
+project_api = Blueprint('project', __name__, url_prefix='/project')
 
 
-@project_api.route('/api/v1/project/list', methods=['GET'])
+@project_api.route('/list', methods=['GET'])
 def project_list():
     return show_project_list()
 
 
-@project_api.route('/api/v1/project', methods=['GET', 'POST', 'PUT', 'DELETE'])
+@project_api.route('/', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def project():
     if request.method == 'GET':
         # 获取项目基础信息
@@ -114,7 +114,7 @@ def add_project():
     :return:
     """
     # 接收入参
-    planner_id = request.json.get('plannerId')
+    planner_id = int(request.json.get('plannerId'))
     print(planner_id)
     print(type(planner_id))
     project_name = request.json.get('projectName')
@@ -143,8 +143,8 @@ def edit_project():
     :return:
     """
     # 接收入参
-    project_id = request.json.get('projectId')
-    planner_id = request.json.get('plannerId')
+    project_id = int(request.json.get('projectId'))
+    planner_id = int(request.json.get('plannerId'))
     project_name = request.json.get('projectName')
 
     if project_id and planner_id and project_name:
@@ -171,7 +171,7 @@ def delete_project():
     :return:
     """
     # 接收入参
-    project_id = request.json.get('projectId')
+    project_id = int(request.json.get('projectId'))
 
     if project_id:
         sql = 'SELECT * FROM project WHERE project_id = "%i";' % project_id

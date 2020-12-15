@@ -1,6 +1,6 @@
 import sqlite3
 
-import config
+from config import CONF
 
 
 def db(sql=None):
@@ -28,10 +28,10 @@ def connect_database():
     :return: sqlite3.Connection
     """
     # 挂载链接
-    connect = sqlite3.connect(config.DB_HOST)
+    connect = sqlite3.connect(CONF.DB_HOST)
 
     # 强制启动外键约束
-    if config.USE_FOREIGN:
+    if CONF.USE_FOREIGN:
         connect.execute("PRAGMA foreign_keys=1;")
 
     return connect

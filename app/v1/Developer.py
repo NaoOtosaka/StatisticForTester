@@ -7,10 +7,10 @@ from libs.develop_type import *
 
 
 # 实例化蓝图
-developer_api = Blueprint('developer', __name__)
+developer_api = Blueprint('developer', __name__, url_prefix='/developer')
 
 
-@developer_api.route('/api/v1/developer/list', methods=['GET'])
+@developer_api.route('/list', methods=['GET'])
 def developer_list():
     """
     返回开发者列表
@@ -19,7 +19,7 @@ def developer_list():
     return json.dumps(get_developer_list(), ensure_ascii=False)
 
 
-@developer_api.route('/api/v1/developer', methods=['GET', 'POST', 'PUT', 'DELETE'])
+@developer_api.route('/', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def developer():
     if request.method == 'GET':
         return show_developer_info()

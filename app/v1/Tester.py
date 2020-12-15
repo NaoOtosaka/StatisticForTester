@@ -5,10 +5,10 @@ import json
 from libs.tester import *
 
 # 实例化蓝图
-tester_api = Blueprint('tester', __name__)
+tester_api = Blueprint('tester', __name__, url_prefix='/tester')
 
 
-@tester_api.route('/api/v1/tester/list', methods=['GET'])
+@tester_api.route('/list', methods=['GET'])
 def tester_list():
     """
     返回测试人员列表
@@ -17,7 +17,7 @@ def tester_list():
     return json.dumps(show_tester_list(), ensure_ascii=False)
 
 
-@tester_api.route('/api/v1/tester', methods=['GET', 'POST', 'PUT', 'DELETE'])
+@tester_api.route('/', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def tester():
     if request.method == 'GET':
         return show_tester_info()

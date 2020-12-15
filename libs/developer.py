@@ -1,4 +1,4 @@
-from tools.database import db
+
 
 from libs.project import *
 
@@ -24,7 +24,7 @@ def get_developer_base_info(developer_id):
         FROM
         developer
         WHERE
-        developer.developer_id = "%i"
+        developer.developer_id = "%i";
     """ % developer_id
 
     # 获取测试基础信息
@@ -161,9 +161,8 @@ def get_project_list_with_developer(developer_id):
                     'projectName': result[i][1]
                 }
             )
-        return temp
-    else:
-        return []
+
+    return temp
 
 
 def get_bug_with_developer_and_project(developer_id, project_id):

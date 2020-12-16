@@ -3,6 +3,8 @@ from flask import request
 import json
 
 from libs.bug import *
+from libs.tester import *
+from libs.developer import *
 
 
 # 实例化蓝图
@@ -55,6 +57,18 @@ def show_bug_info():
     展示BUG详细信息
     :return:
     """
+    bug_id = int(request.values.get('bugId'))
+
+    if bug_id:
+        base_info = get_bug_base_info(bug_id)
+        print(base_info)
+        if base_info:
+            developer_info = get_tester_base_info(base_info['testerId'])
+            tester_info = get_developer_base_info(base_info['developerId'])
+
+        return json.dumps(base_info, ensure_ascii=False)
+    else:
+        pass
 
 
 def add_bug():

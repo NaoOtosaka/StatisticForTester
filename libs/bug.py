@@ -72,8 +72,8 @@ def get_bug_base_info(bug_id):
         bug.is_closed,
         bug.is_online,
         bug.is_finished,
-        bug.close_time,
         bug.create_time,
+        bug.close_time,
         bug.developer_id,
         bug.tester_id
         FROM
@@ -85,6 +85,23 @@ def get_bug_base_info(bug_id):
     result = db(sql)
     if result:
         print(result)
+        temp = {
+            'bugId': result[0][0],
+            'bugTitle': result[0][1],
+            'bugCategory': result[0][2],
+            'bugType': result[0][3],
+            'phaseId': result[0][4],
+            'isClose': result[0][5],
+            'inOnline': result[0][6],
+            'isFinish': result[0][7],
+            'createTime': result[0][8],
+            'closeTime': result[0][9],
+            'developerId': result[0][10],
+            'testerId': result[0][11],
+        }
+        return temp
+    else:
+        return []
 
 
 def get_tester_info_with_bug(bug_id):

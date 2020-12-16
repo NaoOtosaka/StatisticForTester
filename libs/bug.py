@@ -60,7 +60,20 @@ def get_bug_list():
 def get_bug_base_info(bug_id):
     """
     获取BUG基础信息
-    :return:
+    :return:{
+        'bugId': int,
+        'bugTitle': string,
+        'bugCategory': int,
+        'bugType': int,
+        'phaseId': int,
+        'isClose': boolean,
+        'inOnline': boolean,
+        'isFinish': boolean,
+        'createTime': timestamp,
+        'closeTime': timestamp,
+        'developerId': int,
+        'testerId': int,
+    }
     """
     sql = """
         SELECT

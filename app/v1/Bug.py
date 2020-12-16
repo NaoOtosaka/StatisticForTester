@@ -112,6 +112,10 @@ def show_bug_info():
 
 
 def add_bug():
+    """
+    新增BUG
+    :return:
+    """
     pass
 
 

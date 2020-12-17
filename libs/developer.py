@@ -28,6 +28,7 @@ def get_developer_base_info(developer_id):
     """ % developer_id
 
     # 获取测试基础信息
+
     result = db(sql)
     if result:
         print(result)

@@ -66,15 +66,15 @@ VALUES
 
 
 -- 测试用BUG
-INSERT INTO "bug" ("tester_id", "developer_id", "phase_id", "bug_type", "category", "title", "create_time", "close_time", "is_finished", "is_closed", "is_online")
+INSERT INTO "bug" ("tester_id", "developer_id", "phase_id", "bug_type", "category", "kb_id", "title", "model", "create_time", "close_time", "is_finished", "is_closed", "is_online")
 VALUES
-	(1, 2, 1, 1, 1, "测试用冒烟异常", 1607153287000, NULL, "false", "false", "true"),
-	(2, 1, 3, 1, 1, "测试用回归异常", 1607153287000, NULL, "false", "false", "true"),
-	(2, 1, 2, 1, 1, "测试用冒烟异常", 1607153287000, NULL, "false", "false", "false"),
-	(1, 1, 4, 1, 1, "测试用冒烟异常", 1607153287000, NULL, "false", "false", "false"),
-	(2, 2, 4, 1, 1, "测试用一轮异常", 1607153287000, NULL, "false", "false", "true"),
-	(3, 3, 5, 1, 1, "测试用二轮异常", 1607153287000, NULL, "false", "false", "false"),
-	(3, 4, 5, 1, 1, "测试用兼容性异常", 1607153287000, NULL, "false", "false", "true");
+	(1, 2, 1, 1, 1, 10001, "测试用冒烟异常", "测试模块1", 1607153287000, NULL, "false", "false", "true"),
+	(2, 1, 3, 1, 1, 10002, "测试用回归异常", "测试模块2", 1607153287000, NULL, "false", "false", "true"),
+	(2, 1, 2, 1, 1, 10003, "测试用冒烟异常", "测试模块1", 1607153287000, NULL, "false", "false", "false"),
+	(1, 1, 4, 1, 1, 10004, "测试用冒烟异常", "测试模块2", 1607153287000, NULL, "false", "false", "false"),
+	(2, 2, 4, 1, 1, 10005, "测试用一轮异常", "测试模块3", 1607153287000, NULL, "false", "false", "true"),
+	(3, 3, 5, 1, 1, 10006, "测试用二轮异常", "测试模块1", 1607153287000, NULL, "false", "false", "false"),
+	(3, 4, 5, 1, 1, 10007, "测试用兼容性异常", "测试模块4", 1607153287000, NULL, "false", "false", "true");
 
 
 

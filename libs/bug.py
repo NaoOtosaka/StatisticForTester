@@ -8,7 +8,9 @@ def get_bug_list():
     [
         {
             'bugId': int,
+            'kbId': int,
             'bugTitle': string,
+            'bugModel': string,
             'projectName': string,
             'testerName': string,
             'developerName': string,
@@ -20,7 +22,9 @@ def get_bug_list():
     sql = """
     SELECT
     bug.bug_id,
+    bug.kb_id,
     bug.title,
+    bug.model,
     project.project_name,
     tester.name,
     developer.name,
@@ -45,12 +49,14 @@ def get_bug_list():
             temp.append(
                 {
                     'bugId': result[i][0],
-                    'bugTitle': result[i][1],
-                    'projectName': result[i][2],
-                    'testerName': result[i][3],
-                    'developerName': result[i][4],
-                    'is_finish': result[i][5],
-                    'is_close': result[i][6],
+                    'kbId': result[i][1],
+                    'bugTitle': result[i][2],
+                    'bugModel': result[i][3],
+                    'projectName': result[i][4],
+                    'testerName': result[i][5],
+                    'developerName': result[i][6],
+                    'is_finish': result[i][7],
+                    'is_close': result[i][8],
                 }
             )
 
@@ -62,7 +68,9 @@ def get_bug_base_info(bug_id):
     获取BUG基础信息
     :return:{
         'bugId': int,
+        'kbId': int,
         'bugTitle': string,
+        'bugModel': string,
         'bugCategory': int,
         'bugType': int,
         'phaseId': int,
@@ -78,7 +86,9 @@ def get_bug_base_info(bug_id):
     sql = """
         SELECT
         bug.bug_id,
+        bug.kb_id,
         bug.title,
+        bug.model,
         bug.category,
         bug.bug_type,
         bug.phase_id,
@@ -100,17 +110,19 @@ def get_bug_base_info(bug_id):
         print(result)
         temp = {
             'bugId': result[0][0],
-            'bugTitle': result[0][1],
-            'bugCategory': result[0][2],
-            'bugType': result[0][3],
-            'phaseId': result[0][4],
-            'isClose': result[0][5],
-            'inOnline': result[0][6],
-            'isFinish': result[0][7],
-            'createTime': result[0][8],
-            'closeTime': result[0][9],
-            'developerId': result[0][10],
-            'testerId': result[0][11],
+            'kbId': result[0][1],
+            'bugTitle': result[0][2],
+            'bugModel': result[0][3],
+            'bugCategory': result[0][4],
+            'bugType': result[0][5],
+            'phaseId': result[0][6],
+            'isClose': result[0][7],
+            'inOnline': result[0][8],
+            'isFinish': result[0][9],
+            'createTime': result[0][10],
+            'closeTime': result[0][11],
+            'developerId': result[0][12],
+            'testerId': result[0][13],
         }
         return temp
     else:

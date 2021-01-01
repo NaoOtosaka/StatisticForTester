@@ -91,7 +91,9 @@ def show_bug_info():
 
             res = {
                 'bugId': base_info['bugId'],
+                'kbId': base_info['kbId'],
                 'bugTitle': base_info['bugTitle'],
+                'bugModel': base_info['bugModel'],
                 'bugCategory': category,
                 'bugType': bug_type,
                 'createTime': base_info['createTime'],

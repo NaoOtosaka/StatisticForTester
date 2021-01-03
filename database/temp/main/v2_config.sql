@@ -31,7 +31,7 @@ VALUES
 INSERT INTO "test_plan" ("plan_name")
 VALUES
 	("冒烟测试"),
-	("冒烟测试复核"),
+	("冒烟复核"),
 	("一轮测试"),
 	("二轮测试"),
 	("兼容性测试"),

@@ -22,11 +22,11 @@ def tester():
     if request.method == 'GET':
         return show_tester_info()
     elif request.method == 'POST':
-        return add_tester()
+        return add_tester_api()
     elif request.method == 'PUT':
-        return edit_tester()
+        return edit_tester_api()
     elif request.method == 'DELETE':
-        return delete_tester()
+        return delete_tester_api()
 
 
 def show_tester_list():
@@ -95,7 +95,7 @@ def show_tester_info():
     return json.dumps(res, ensure_ascii=False)
 
 
-def add_tester():
+def add_tester_api():
     """
     新增测试人员
     :return:{
@@ -124,7 +124,7 @@ def add_tester():
     return json.dumps(res, ensure_ascii=False)
 
 
-def edit_tester():
+def edit_tester_api():
     """
     编辑测试人员
     :return:{
@@ -155,7 +155,7 @@ def edit_tester():
     return json.dumps(res, ensure_ascii=False)
 
 
-def delete_tester():
+def delete_tester_api():
     """
     删除测试人员
     :return:{

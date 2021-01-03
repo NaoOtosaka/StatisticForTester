@@ -199,6 +199,30 @@ def get_bug_with_developer_and_project(developer_id, project_id):
         return []
 
 
+def check_developer_with_id(developer_id):
+    """
+    根据开发人员id检查数据是否存在,若存在则返回True
+    :param developer_id:
+    :return: 对应人员id
+    """
+    sql = """
+    SELECT
+    1
+    FROM
+    developer
+    WHERE
+    developer.developer_id = '%i'
+    LIMIT 1
+    """ % developer_id
+
+    result = db(sql)
+    print(result)
+    if result:
+        return True
+    else:
+        return False
+
+
 def check_developer_with_name(developer_name):
     """
     根据开发人员姓名检查数据是否存在,若存在则返回id
@@ -220,3 +244,62 @@ def check_developer_with_name(developer_name):
     else:
         return 0
 
+
+def check_developer_with_email(developer_email):
+    """
+    根据开发人员邮箱检查数据是否存在,若存在则返回id
+    :return:
+    """
+    sql = """
+    SELECT
+    developer.developer_id
+    FROM
+    developer
+    WHERE
+    developer.email = '%s'
+    """ % developer_email
+
+    result = db(sql)
+    print(result)
+    if result:
+        return result[0][0]
+    else:
+        return 0
+
+
+def add_developer(developer_name, developer_email, develop_type=None):
+    if develop_type:
+        sql = """
+        INSERT INTO "developer" ("type_id", "name", "email") 
+        VALUES ('%i', '%s', '%s');
+        """ % (develop_type, developer_name, developer_email)
+    else:
+        sql = """
+        INSERT INTO "developer" ("name", "email") 
+        VALUES ('%s', '%s');
+        """ % (developer_name, developer_email)
+    status = db(sql)
+    if status:
+        return 1
+    else:
+        return 0
+
+
+def get_developer_insert_id():
+    """
+    获取新增后id
+    :return:
+    """
+    sql = """
+    SELECT developer_id 
+    FROM developer 
+    ORDER BY developer_id 
+    DESC LIMIT 1
+    """
+
+    result = db(sql)
+
+    if result:
+        return result[0][0]
+    else:
+        return False

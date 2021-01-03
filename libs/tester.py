@@ -273,7 +273,7 @@ def add_tester(tester_name, tester_email):
     :return: 成功返回1， 失败返回0
     """
     sql = """
-    INSERT INTO "tester" ("email", "name")
+    INSERT INTO "tester" ("name", "email")
     VALUES
         ('%s', '%s')
     """ % (tester_name, tester_email)
@@ -319,3 +319,23 @@ def delete_tester(tester_id):
         return 1
     else:
         return 0
+
+
+def get_tester_insert_id():
+    """
+    获取新增后id
+    :return:
+    """
+    sql = """
+    SELECT tester_id 
+    FROM tester 
+    ORDER BY tester_id 
+    DESC LIMIT 1
+    """
+
+    result = db(sql)
+
+    if result:
+        return result[0][0]
+    else:
+        return False

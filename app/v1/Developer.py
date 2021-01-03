@@ -24,11 +24,11 @@ def developer():
     if request.method == 'GET':
         return show_developer_info()
     elif request.method == 'POST':
-        pass
+        return add_developer_api()
     elif request.method == 'PUT':
-        pass
+        return edit_developer_api()
     elif request.method == 'DELETE':
-        pass
+        return delete_developer_api()
 
 
 def show_developer_info():
@@ -73,7 +73,7 @@ def show_developer_info():
     return json.dumps(res, ensure_ascii=False)
 
 
-def add_developer():
+def add_developer_api():
     """
     新增开发人员
     :return:
@@ -81,17 +81,14 @@ def add_developer():
     # 接受入参
     developer_name = request.json.get('developerName')
     developer_email = request.json.get('developerEmail')
-    develop_type = request.json.get('developType')
+    develop_type = int(request.json.get('developType'))
 
     if developer_name and developer_email:
-        sql = 'SELECT * FROM developer WHERE developer.email = "%s";' % developer_email
-        if db(sql):
+        if check_developer_with_email(developer_email):
             res = {'msg': '该开发人员已存在', 'status': 2001}
         else:
             if select_develop_type_exist(develop_type):
-                insert_sql = 'INSERT INTO "developer" ("type_id", "name", "email") VALUES ("%i", "%s", "%s");' \
-                             % (develop_type, developer_name, developer_email)
-                status = db(insert_sql)
+                status = add_developer(developer_name, developer_email, develop_type)
                 if status:
                     res = {'msg': '成功', 'status': 1}
                 else:
@@ -104,7 +101,7 @@ def add_developer():
     return json.dumps(res, ensure_ascii=False)
 
 
-def edit_developer():
+def edit_developer_api():
     """
     编辑开发人员
     :return:{
@@ -142,7 +139,7 @@ def edit_developer():
     return json.dumps(res, ensure_ascii=False)
 
 
-def delete_developer():
+def delete_developer_api():
     """
     删除开发人员
     :return:

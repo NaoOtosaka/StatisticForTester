@@ -48,7 +48,7 @@ CREATE TABLE "planner" (
 DROP TABLE IF EXISTS "developer";
 CREATE TABLE "developer" (
   "developer_id" INTEGER NOT NULL,
-  "type_id" INTEGER NOT NULL,
+  "type_id" INTEGER,
   "name" NVARCHAR(16) NOT NULL,
 	"email" VARCHAR(255) NOT NULL,
   PRIMARY KEY ("developer_id"),

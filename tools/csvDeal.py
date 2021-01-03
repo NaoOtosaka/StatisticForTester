@@ -3,8 +3,10 @@ from libs.tester import *
 from libs.developer import *
 from libs.project import *
 from libs.phase import *
+from libs.bug import *
 import pandas
 import config
+import time
 
 
 def open_csv():
@@ -23,7 +25,7 @@ def process_data(csv_object):
     # 数据遍历
     for index, data in csv_object.iterrows():
         # 看板id
-        bug_id = index
+        kb_id = index
 
         # 标题源数据处理
         title_info = process_title(data['主题'])
@@ -42,9 +44,11 @@ def process_data(csv_object):
 
         # 测试人员
         tester = reserve_chinese(data['跟进QA'])
+        tester_id = process_tester(tester)
 
         # 开发人员
         developer = reserve_chinese(data['指派给'])
+        developer_id = process_developer(developer)
 
         # BUG标签
         bug_type = data['跟踪标签']
@@ -53,13 +57,15 @@ def process_data(csv_object):
         category = ''
 
         # 创建时间
-        create_time = data['创建于']
+        create_time = process_time(data['创建于'])
 
         # 关闭时间
         if pandas.isnull(data['关闭日期']):
             is_close = False
+            close_time = ''
         else:
             is_close = True
+            close_time = process_time(data['完成日期'])
 
         # 完成判定
         if data['% 完成'] == 100:
@@ -67,7 +73,8 @@ def process_data(csv_object):
         else:
             is_finish = False
 
-        print(get_bug_info(bug_id, phase_id, tester, developer, model, bug_type, category, title, create_time, is_finish, is_close, False))
+        print(get_bug_info(tester_id, developer_id, phase_id, bug_type, category, kb_id, title, model, create_time,
+                           close_time, is_finish, is_close, False))
 
 
 def process_title(title):
@@ -133,20 +140,67 @@ def process_plan(plan):
         print('字段异常')
 
 
-def get_bug_info(bug_id, tester, developer, phase, bug_type, category, title, create_time, is_finish, is_close, is_online):
+def process_tester(tester):
+    """
+    测试人员处理
+    :param tester:
+    :return:
+    """
+    # 测试用置空
+    tester_email = ''
+
+    tester_id = check_tester_with_name(tester)
+    if not tester_id:
+        add_tester(tester, tester_email)
+        tester_id = get_tester_insert_id()
+    return tester_id
+
+
+def process_developer(developer):
+    """
+    开发人员处理
+    :param developer:
+    :return:
+    """
+    # 测试用置空
+    developer_email = ''
+
+    developer_id = check_developer_with_name(developer)
+    if not developer_id:
+        add_developer(developer, developer_email)
+        developer_id = get_developer_insert_id()
+    return developer_id
+
+
+def process_time(time_str):
+    """
+    csv时间字符串转时间戳
+    :param time_str:
+    :return:
+    """
+    time_array = time.strptime(time_str, "%Y/%m/%d %H:%M")
+    timestamp = int(time.mktime(time_array))
+    print(timestamp)
+    return timestamp
+
+
+def get_bug_info(tester_id, developer_id, phase_id, bug_type, category, kb_id, title, model, create_time, close_time,
+                 is_finish, is_close, is_online):
     """
     数据封装
     :return:
     """
     temp = [
-        bug_id,
-        tester,
-        developer,
-        phase,
+        tester_id,
+        developer_id,
+        phase_id,
         bug_type,
         category,
+        kb_id,
         title,
+        model,
         create_time,
+        close_time,
         is_finish,
         is_close,
         is_online,
@@ -154,8 +208,14 @@ def get_bug_info(bug_id, tester, developer, phase, bug_type, category, title, cr
     return temp
 
 
-def insert_bug_info():
+def insert_bug_info(bug_info):
+    """
+    添加Bug
+    :param bug_info:
+    :return:
+    """
     pass
+
 
 
 if __name__ == '__main__':

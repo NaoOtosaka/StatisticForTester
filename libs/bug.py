@@ -184,7 +184,7 @@ def check_bug_with_kb_id(kb_id):
     """
     sql = """
     SELECT
-    bug.bug_id
+    1
     FROM
     bug
     WHERE

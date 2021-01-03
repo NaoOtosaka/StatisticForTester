@@ -24,7 +24,7 @@ def get_developer_base_info(developer_id):
         FROM
         developer
         WHERE
-        developer.developer_id = "%i";
+        developer.developer_id = '%i';
     """ % developer_id
 
     # 获取测试基础信息
@@ -144,7 +144,7 @@ def get_project_list_with_developer(developer_id):
         INNER JOIN develop ON develop.project_id = project.project_id
         INNER JOIN developer ON develop.developer_id = developer.developer_id
         WHERE
-        developer.developer_id = "%s"
+        developer.developer_id = '%s'
     """ % developer_id
 
     temp = []
@@ -181,8 +181,8 @@ def get_bug_with_developer_and_project(developer_id, project_id):
         INNER JOIN project ON project_phases.project_id = project.project_id
         INNER JOIN developer ON bug.developer_id = developer.developer_id
         WHERE
-        developer.developer_id = "%i" AND
-        project.project_id = "%i"
+        developer.developer_id = '%i' AND
+        project.project_id = '%i'
     """ % (developer_id, project_id)
 
     temp = []
@@ -197,3 +197,26 @@ def get_bug_with_developer_and_project(developer_id, project_id):
         return temp
     else:
         return []
+
+
+def check_developer_with_name(developer_name):
+    """
+    根据开发人员姓名检查数据是否存在,若存在则返回id
+    :return:
+    """
+    sql = """
+    SELECT
+    developer.developer_id
+    FROM
+    developer
+    WHERE
+    developer.name = '%s'
+    """ % developer_name
+
+    result = db(sql)
+    print(result)
+    if result:
+        return result[0][0]
+    else:
+        return 0
+

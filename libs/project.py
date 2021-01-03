@@ -233,3 +233,59 @@ def get_bug_list_with_project(project_id):
         return temp
     else:
         return []
+
+
+def check_project_with_name(project_name):
+    """
+    根据项目名检查数据是否存在,若存在则返回id
+    :return:
+    """
+    sql = """
+    SELECT
+    project.project_id
+    FROM
+    project
+    WHERE
+    project.project_name = '%s'
+    """ % project_name
+
+    result = db(sql)
+    print(result)
+    if result:
+        return result[0][0]
+    else:
+        return 0
+
+
+def get_plan_with_project_id(project_id):
+    """
+    根据项目id获取项目有关进度
+    :return:
+    """
+    sql = """
+    SELECT
+    project_phases.phase_id,
+    project_phases.plan_id
+    FROM
+    project_phases
+    WHERE
+    project_phases.project_id = '%s'
+    """ % project_id
+
+    temp = []
+
+    result = db(sql)
+    print(result)
+
+    if result:
+        print(result)
+        for i in range(len(result)):
+            temp.append(
+                {
+                    'phaseId': result[i][0],
+                    'planId': result[i][1],
+                }
+            )
+        return temp
+    else:
+        return []

@@ -175,3 +175,59 @@ def get_bug_type_with_bug(bug_id):
 def get_category_with_bug(bug_id):
     pass
 
+
+def check_bug_with_kb_id(kb_id):
+    """
+    根据看板id检查数据是否存在,若存在则返回id
+    :param kb_id:
+    :return: 对应人员id
+    """
+    sql = """
+    SELECT
+    bug.bug_id
+    FROM
+    bug
+    WHERE
+    bug.kb_id = '%s'
+    LIMIT 1
+    """ % kb_id
+
+    result = db(sql)
+    print(result)
+    if result:
+        return result[0][0]
+    else:
+        return 0
+
+
+def add_bug(tester_id, developer_id, phase_id, bug_type, category, kb_id, title, model, create_time, close_time,
+            is_finished, is_closed, is_online):
+    """
+    新增Bug
+    :param tester_id:
+    :param developer_id:
+    :param phase_id:
+    :param bug_type:
+    :param category:
+    :param kb_id:
+    :param title:
+    :param model:
+    :param create_time:
+    :param close_time:
+    :param is_finished:
+    :param is_closed:
+    :param is_online:
+    :return:
+    """
+    sql = """
+    INSERT INTO "bug" ("tester_id", "developer_id", "phase_id", "bug_type", "category", "kb_id", "title", "model", 
+    "create_time", "close_time", "is_finished", "is_closed", "is_online")
+    VALUES
+    ('%i', '%i', '%i', '%i', '%i', '%i', '%s', '%s', '%i', '%i', '%s', '%s', '%s')
+    """ % (tester_id, developer_id, phase_id, bug_type, category, kb_id, title, model, create_time, close_time,
+           is_finished, is_closed, is_online)
+    status = db(sql)
+    if status:
+        return 1
+    else:
+        return 0

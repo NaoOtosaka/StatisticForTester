@@ -120,7 +120,7 @@ CREATE TABLE "bug" (
 	"phase_id" INTEGER NOT NULL,
 	"bug_type" INTEGER NOT NULL,
   "category" INTEGER NOT NULL,
-	"bk_id" INTEGER NOT NULL,
+	"kb_id" INTEGER NOT NULL,
   "title" NVARCHAR(255),
 	"model" NVARCHER(255),
   "create_time" TIMESTAMP,

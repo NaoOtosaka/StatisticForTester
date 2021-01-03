@@ -70,7 +70,7 @@ def show_tester_info():
         'status': 1
     }
     """
-    tester_id = request.values.get('testerId')
+    tester_id = int(request.values.get('testerId'))
 
     if tester_id:
         base_info = get_tester_base_info(tester_id)
@@ -110,13 +110,10 @@ def add_tester():
     print(tester_email)
 
     if tester_name and tester_email:
-        sql = 'SELECT * FROM tester WHERE tester.email = "%s";' % tester_email
-        if db(sql):
+        if check_tester_with_email(tester_email):
             res = {'msg': '该测试人员已存在', 'status': 2001}
         else:
-            insert_sql = 'INSERT INTO "tester" ("name", "email") VALUES ("%s", "%s");' \
-                         % (tester_name, tester_email)
-            status = db(insert_sql)
+            status = add_tester(tester_name, tester_email)
             if status:
                 res = {'msg': '成功', 'status': 1}
             else:
@@ -136,7 +133,7 @@ def edit_tester():
     }
     """
     # 接受入参
-    tester_id = request.json.get('testerId')
+    tester_id = int(request.json.get('testerId'))
     tester_name = request.json.get('testerName')
     tester_email = request.json.get('testerEmail')
     print(tester_id)
@@ -144,19 +141,12 @@ def edit_tester():
     print(tester_email)
 
     if tester_name and tester_email and tester_id:
-        sql = 'SELECT * FROM tester WHERE tester.tester_id = "%i";' % tester_id
-        if db(sql):
-            sql = 'SELECT * FROM tester WHERE tester.email = "%s";' % tester_email
-            if db(sql):
-                update_sql = 'UPDATE tester SET name="%s", email="%s" WHERE tester_id="%i"' \
-                             % (tester_name, tester_email, tester_id)
-                status = db(update_sql)
-                if status:
-                    res = {'msg': '成功', 'status': 1}
-                else:
-                    res = {'msg': '系统错误', 'status': 500}
+        if check_tester_with_id(tester_id):
+            status = edit_tester(tester_id, tester_name, tester_email)
+            if status:
+                res = {'msg': '成功', 'status': 1}
             else:
-                res = {'msg': '邮箱不可重复', 'status': 2001}
+                res = {'msg': '系统错误', 'status': 500}
         else:
             res = {'msg': '该测试人员不存在', 'status': 2001}
     else:
@@ -173,19 +163,17 @@ def delete_tester():
         'status': int
     }
     """
-    tester_id = request.json.get('testerId')
+    tester_id = int(request.json.get('testerId'))
 
     if tester_id:
-        sql = 'SELECT * FROM tester WHERE tester_id = "%i";' % tester_id
-        if db(sql):
-            delete_sql = 'DELETE FROM tester WHERE tester_id="%i";' % tester_id
-            status = db(delete_sql)
+        if check_tester_with_id(tester_id):
+            status = delete_tester(tester_id)
             if status:
                 res = {'msg': '成功', 'status': 1}
             else:
                 res = {'msg': '系统错误', 'status': 500}
         else:
-            res = {'msg': '项目不存在', 'status': 2001}
+            res = {'msg': '该测试人员不存在', 'status': 2001}
     else:
         res = {'msg': '参数错误', 'status': 4001}
 

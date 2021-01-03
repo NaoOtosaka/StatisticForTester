@@ -1,4 +1,3 @@
-from tools.database import db
 from libs.project import *
 
 
@@ -21,7 +20,7 @@ def get_tester_base_info(tester_id):
         FROM
         tester
         WHERE
-        tester.tester_id = "%i"
+        tester.tester_id = '%i'
     """ % tester_id
 
     # 获取测试基础信息
@@ -29,10 +28,10 @@ def get_tester_base_info(tester_id):
     if result:
         print(result)
         temp = {
-                'testerId': result[0][0],
-                'testerName': result[0][1],
-                'testerEmail': result[0][2]
-            }
+            'testerId': result[0][0],
+            'testerName': result[0][1],
+            'testerEmail': result[0][2]
+        }
         return temp
     else:
         return []
@@ -136,7 +135,7 @@ def get_project_list_with_tester(tester_id):
         INNER JOIN test ON test.tester_id = tester.tester_id
         INNER JOIN project ON test.project_id = project.project_id
         WHERE
-        test.tester_id = "%i"
+        test.tester_id = '%i'
     """ % tester_id
 
     temp = []
@@ -162,6 +161,8 @@ def get_project_list_with_tester(tester_id):
 def get_bug_with_tester_and_project(tester_id, project_id):
     """
     根据项目人员负责的项目获取项目中该测试人员负责的Bug
+    :type tester_id int
+    :type project_id int
     :return: bug_id_list
     [int]
     """
@@ -174,8 +175,8 @@ def get_bug_with_tester_and_project(tester_id, project_id):
         INNER JOIN project ON project_phases.project_id = project.project_id
         INNER JOIN tester ON bug.tester_id = tester.tester_id
         WHERE
-        tester.tester_id = "%i" AND
-        project.project_id = "%i"
+        tester.tester_id = '%i' AND
+        project.project_id = '%i'
     """ % (tester_id, project_id)
 
     temp = []
@@ -190,3 +191,131 @@ def get_bug_with_tester_and_project(tester_id, project_id):
         return temp
     else:
         return []
+
+
+def check_tester_with_id(tester_id):
+    """
+    根据测试人员id检查数据是否存在,若存在则返回True
+    :param tester_id:
+    :return: 对应人员id
+    """
+    sql = """
+    SELECT
+    1
+    FROM
+    tester
+    WHERE
+    tester.tester_id = '%i'
+    LIMIT 1
+    """ % tester_id
+
+    result = db(sql)
+    print(result)
+    if result:
+        return True
+    else:
+        return False
+
+
+def check_tester_with_name(tester_name):
+    """
+    根据测试人员姓名检查数据是否存在,若存在则返回id
+    :param tester_name:
+    :return: 对应人员id
+    """
+    sql = """
+    SELECT
+    tester.tester_id
+    FROM
+    tester
+    WHERE
+    tester.name = '%s'
+    LIMIT 1
+    """ % tester_name
+
+    result = db(sql)
+    print(result)
+    if result:
+        return result[0][0]
+    else:
+        return 0
+
+
+def check_tester_with_email(tester_email):
+    """
+    根据测试邮箱姓名检查数据是否存在,若存在则返回id
+    :param tester_email:
+    :return: 对应人员id
+    """
+    sql = """
+    SELECT
+    tester.tester_id
+    FROM
+    tester
+    WHERE
+    tester.email = '%s'
+    LIMIT 1
+    """ % tester_email
+
+    result = db(sql)
+    print(result)
+    if result:
+        return result[0][0]
+    else:
+        return 0
+
+
+def add_tester(tester_name, tester_email):
+    """
+    新建测试人员
+    :param tester_name:
+    :param tester_email:
+    :return: 成功返回1， 失败返回0
+    """
+    sql = """
+    INSERT INTO "tester" ("email", "name")
+    VALUES
+        ('%s', '%s')
+    """ % (tester_name, tester_email)
+    status = db(sql)
+    if status:
+        return 1
+    else:
+        return 0
+
+
+def edit_tester(tester_id, tester_name, tester_email):
+    """
+    编辑测试人员信息
+    :param tester_id:
+    :param tester_name:
+    :param tester_email:
+    :return: 成功返回1， 失败返回0
+    """
+    sql = """
+    UPDATE tester 
+    SET name='%s', email='%s'
+    WHERE tester_id='%i'
+    """ % (tester_name, tester_email, tester_id)
+    status = db(sql)
+    if status:
+        return 1
+    else:
+        return 0
+
+
+def delete_tester(tester_id):
+    """
+    根据id删除测试人员
+    :param tester_id:
+    :return:
+    """
+    sql = """
+    DELETE FROM tester 
+    WHERE tester_id='%i';
+    """ % tester_id
+    status = db(sql)
+    if status:
+        return 1
+    else:
+        return 0

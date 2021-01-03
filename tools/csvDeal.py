@@ -14,7 +14,7 @@ def open_csv():
         f_csv = pandas.read_csv(f, encoding='utf-8', header=0, index_col=0)
         # print(f_csv['#', '跟踪标签', '主题', '状态', '作者', '指派给', '创建于', '跟进QA'])
         print(type(f_csv))
-        process_data(f_csv)
+        return f_csv
 
 
 def process_data(csv_object):
@@ -22,6 +22,7 @@ def process_data(csv_object):
     基础数据提取
     :return:
     """
+    bug_data = []
     # 数据遍历
     for index, data in csv_object.iterrows():
         # 看板id
@@ -51,10 +52,10 @@ def process_data(csv_object):
         developer_id = process_developer(developer)
 
         # BUG标签
-        bug_type = data['跟踪标签']
+        bug_type = process_bug_type(data['跟踪标签'])
 
         # BUG类型
-        category = ''
+        category = 'NULL'
 
         # 创建时间
         create_time = process_time(data['创建于'])
@@ -73,8 +74,10 @@ def process_data(csv_object):
         else:
             is_finish = False
 
-        print(get_bug_info(tester_id, developer_id, phase_id, bug_type, category, kb_id, title, model, create_time,
-                           close_time, is_finish, is_close, False))
+        bug_data.append(get_bug_info(tester_id, developer_id, phase_id, bug_type, category, kb_id, title, model,
+                                     create_time, close_time, is_finish, is_close, False))
+
+    return bug_data
 
 
 def process_title(title):
@@ -86,6 +89,19 @@ def process_title(title):
     """
     title_info = title.split('-')
     return title_info
+
+
+def process_bug_type(bug_type):
+    """
+    BUG类型操作
+    :param bug_type:
+    :return:
+    """
+    if bug_type in config.Config.BaseData.bug_type:
+        type_id = config.Config.BaseData.bug_type[bug_type]
+        return type_id
+    else:
+        print('字段异常')
 
 
 def get_phase_info(project, plan):
@@ -187,7 +203,7 @@ def process_time(time_str):
 def get_bug_info(tester_id, developer_id, phase_id, bug_type, category, kb_id, title, model, create_time, close_time,
                  is_finish, is_close, is_online):
     """
-    数据封装
+    数据整合
     :return:
     """
     temp = [
@@ -214,13 +230,33 @@ def insert_bug_info(bug_info):
     :param bug_info:
     :return:
     """
-    pass
+    if not check_bug_with_kb_id(bug_info[5]):
+        add_bug(
+            bug_info[0],
+            bug_info[1],
+            bug_info[2],
+            bug_info[3],
+            bug_info[4],
+            bug_info[5],
+            bug_info[6],
+            bug_info[7],
+            bug_info[8],
+            bug_info[9],
+            bug_info[10],
+            bug_info[11],
+            bug_info[12]
+        )
+    else:
+        print("BUG已存在")
 
+
+def main():
+    csv_object = open_csv()
+    bug_data = process_data(csv_object)
+    for data in bug_data:
+        print(data)
+        insert_bug_info(data)
 
 
 if __name__ == '__main__':
-    open_csv()
-    # check_tester_with_name('QA侧测试3')
-    # check_developer_with_name('开发侧测试1')
-    # project_id = check_project_with_name('测试用项目1')
-    # print(get_plan_with_project_id(project_id))
+    main()

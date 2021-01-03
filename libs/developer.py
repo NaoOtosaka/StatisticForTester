@@ -300,6 +300,6 @@ def get_developer_insert_id():
     result = db(sql)
 
     if result:
-        return result[0][0]
+        return True
     else:
         return False

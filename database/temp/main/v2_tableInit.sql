@@ -119,7 +119,7 @@ CREATE TABLE "bug" (
   "developer_id" INTEGER NOT NULL,
 	"phase_id" INTEGER NOT NULL,
 	"bug_type" INTEGER NOT NULL,
-  "category" INTEGER NOT NULL,
+  "category" INTEGER,
 	"kb_id" INTEGER NOT NULL,
   "title" NVARCHAR(255),
 	"model" NVARCHER(255),

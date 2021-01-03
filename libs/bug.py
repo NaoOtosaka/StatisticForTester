@@ -223,9 +223,10 @@ def add_bug(tester_id, developer_id, phase_id, bug_type, category, kb_id, title,
     INSERT INTO "bug" ("tester_id", "developer_id", "phase_id", "bug_type", "category", "kb_id", "title", "model", 
     "create_time", "close_time", "is_finished", "is_closed", "is_online")
     VALUES
-    ('%i', '%i', '%i', '%i', '%i', '%i', '%s', '%s', '%i', '%i', '%s', '%s', '%s')
+    (%i, %i, %i, %i, %s, %i, '%s', '%s', '%i', %r, '%s', '%s', '%s')
     """ % (tester_id, developer_id, phase_id, bug_type, category, kb_id, title, model, create_time, close_time,
            is_finished, is_closed, is_online)
+    print(sql)
     status = db(sql)
     if status:
         return 1

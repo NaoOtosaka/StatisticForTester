@@ -13,7 +13,7 @@ def get_bug_type(type_id):
         FROM
         bug_type
         WHERE
-        bug_type.type_id = "%i"
+        bug_type.type_id = '%i'
     """ % type_id
 
     result = db(sql)
@@ -36,7 +36,7 @@ def check_type_with_name(type_name):
         FROM
         bug_type
         WHERE
-        bug_type.type_id = "%i"
+        bug_type.type_id = '%i'
     """ % type_name
 
     result = db(sql)

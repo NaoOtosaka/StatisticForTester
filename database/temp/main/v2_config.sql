@@ -44,3 +44,10 @@ VALUES
 	("线上验收");
 	
 	
+-- 策划侧预置数据
+INSERT INTO "planner" ("name", "email")
+VALUES
+	("未分配", "null");
+
+	
+	

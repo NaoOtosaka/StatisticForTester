@@ -13,7 +13,7 @@ def get_develop_type_with_type_id(type_id):
         FROM
         develop_type
         WHERE
-        develop_type.type_id = "%i"
+        develop_type.type_id = '%i'
     """ % type_id
 
     result = db(sql)
@@ -35,7 +35,7 @@ def select_develop_type_exist(type_id):
             FROM
             develop_type
             WHERE
-            develop_type.type_id =  "%i"
+            develop_type.type_id =  '%i'
         """ % type_id
 
     result = db(sql)

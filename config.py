@@ -12,6 +12,22 @@ class Config(object):
 
     API_VERSION = 'v1'
 
+    class BaseData(object):
+        plan = {
+            "冒烟测试": 1,
+            "冒烟复核": 2,
+            "一轮测试": 3,
+            "二轮测试": 4,
+            "兼容性测试": 5,
+            "弱网测试": 6,
+            "压力测试": 7,
+            "灵敏度测试": 8,
+            "性能测试": 9,
+            "单元测试": 10,
+            "回归测试": 11,
+            "线上验收": 12,
+        }
+
 
 class DevelopmentConfig(Config):
     DEBUG = True

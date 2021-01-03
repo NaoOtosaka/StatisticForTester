@@ -21,13 +21,13 @@ def project():
         return show_project_info()
     elif request.method == 'POST':
         # 创建项目
-        return add_project()
+        return add_project_api()
     elif request.method == 'PUT':
         # 编辑项目
-        return edit_project()
+        return edit_project_api()
     elif request.method == 'DELETE':
         # 删除项目
-        return delete_project()
+        return delete_project_api()
 
 
 def show_project_info():
@@ -108,7 +108,7 @@ def show_project_list():
     return json.dumps(res, ensure_ascii=False)
 
 
-def add_project():
+def add_project_api():
     """
     新建项目
     :return:
@@ -116,17 +116,13 @@ def add_project():
     # 接收入参
     planner_id = int(request.json.get('plannerId'))
     print(planner_id)
-    print(type(planner_id))
     project_name = request.json.get('projectName')
 
     if project_name and planner_id:
-        sql = 'SELECT * FROM project WHERE project_name = "%s";' % project_name
-        if db(sql):
+        if check_project_with_name(project_name):
             res = {'msg': '项目已存在', 'status': 2001}
         else:
-            insert_sql = 'INSERT INTO project ("planner_id", "project_name") VALUES (%i, "%s")' \
-                         % (planner_id, project_name)
-            status = db(insert_sql)
+            status = add_project(planner_id, project_name)
             if status:
                 res = {'msg': '成功', 'status': 1}
             else:
@@ -137,7 +133,7 @@ def add_project():
     return json.dumps(res, ensure_ascii=False)
 
 
-def edit_project():
+def edit_project_api():
     """
     编辑项目
     :return:
@@ -165,7 +161,7 @@ def edit_project():
     return json.dumps(res, ensure_ascii=False)
 
 
-def delete_project():
+def delete_project_api():
     """
     删除项目
     :return:

@@ -257,35 +257,39 @@ def check_project_with_name(project_name):
         return 0
 
 
-def get_plan_with_project_id(project_id):
+def add_project(planner_id, project_name):
     """
-    根据项目id获取项目有关进度
+    新建项目
+    :param planner_id:
+    :param project_name:
     :return:
     """
     sql = """
-    SELECT
-    project_phases.phase_id,
-    project_phases.plan_id
-    FROM
-    project_phases
-    WHERE
-    project_phases.project_id = '%s'
-    """ % project_id
+    INSERT INTO "project"("planner_id", "project_name") 
+    VALUES ('%i', '%s')
+    """ % (planner_id, project_name)
+    status = db(sql)
+    if status:
+        return 1
+    else:
+        return 0
 
-    temp = []
+
+def get_project_insert_id():
+    """
+    获取新增后id
+    :return:
+    """
+    sql = """
+    SELECT project_id 
+    FROM project 
+    ORDER BY project_id 
+    DESC LIMIT 1
+    """
 
     result = db(sql)
-    print(result)
 
     if result:
-        print(result)
-        for i in range(len(result)):
-            temp.append(
-                {
-                    'phaseId': result[i][0],
-                    'planId': result[i][1],
-                }
-            )
-        return temp
+        return result[0][0]
     else:
-        return []
+        return False

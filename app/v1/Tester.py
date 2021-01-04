@@ -14,7 +14,7 @@ def tester_list():
     返回测试人员列表
     :return:
     """
-    return json.dumps(show_tester_list(), ensure_ascii=False)
+    return show_tester_list()
 
 
 @tester_api.route('/', methods=['GET', 'POST', 'PUT', 'DELETE'])

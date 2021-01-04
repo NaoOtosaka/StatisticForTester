@@ -32,13 +32,15 @@ def process_data(csv_object):
         title_info = process_title(data['主题'])
 
         # BUG标题
-        title = title_info[len(title_info) - 1]
+        title = title_info[-1]
 
         # BUG模块
         if len(title_info) == 5:
             model = title_info[1] + '-' + title_info[3]
         else:
             model = title_info[1]
+
+
 
         # 项目阶段处理
         phase_id = get_phase_info(title_info[0], title_info[2])
@@ -80,30 +82,6 @@ def process_data(csv_object):
     return bug_data
 
 
-def process_title(title):
-    """
-    标题信息处理
-    :type title str
-    :param title:
-    :return:
-    """
-    title_info = title.split('-')
-    return title_info
-
-
-def process_bug_type(bug_type):
-    """
-    BUG类型操作
-    :param bug_type:
-    :return:
-    """
-    if bug_type in config.Config.BaseData.bug_type:
-        type_id = config.Config.BaseData.bug_type[bug_type]
-        return type_id
-    else:
-        print('字段异常')
-
-
 def get_phase_info(project, plan):
     """
     根据项目名与计划获取对应项目阶段id
@@ -122,6 +100,55 @@ def get_phase_info(project, plan):
             return get_phase_insert_id()
         else:
             return False
+
+
+def process_title(title):
+    """
+    标题信息处理
+    :type title str
+    :param title:
+    :return:
+    """
+    """
+    单名适配规则：
+    {项目名}-{细分平台}-{测试阶段}-{BUG所属一级模块[-{BUG所属二级模块}]}-{问题标题}[-{F}]
+    -例：
+    正常单：MG大赛直播竞猜抽奖-WEB-一轮测试-投票-投票数据异常
+    废弃单：MG大赛直播竞猜抽奖-WEB-一轮测试-投票-投票数据异常-F
+    """
+
+    title_info = title.split('-')
+    if not title_info[-1] == 'F':
+        return title_info
+
+
+def process_model(title_info):
+    """
+    提取头数组中模块信息
+    :type title_info list
+    :param title_info:
+    :return:
+    """
+    # 细分平台
+    model = title_info[1]
+
+    for i in range(3, len(title_info) - 2):
+        model = '-' + title_info[i]
+
+    return model
+
+
+def process_bug_type(bug_type):
+    """
+    BUG类型操作
+    :param bug_type:
+    :return:
+    """
+    if bug_type in config.Config.BaseData.bug_type:
+        type_id = config.Config.BaseData.bug_type[bug_type]
+        return type_id
+    else:
+        print('字段异常')
 
 
 def process_project(project):

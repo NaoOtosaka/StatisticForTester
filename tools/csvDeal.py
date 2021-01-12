@@ -35,23 +35,16 @@ def process_data(csv_object):
         title = title_info[-1]
 
         # BUG模块
-        if len(title_info) == 5:
-            model = title_info[1] + '-' + title_info[3]
-        else:
-            model = title_info[1]
-
-
+        model = process_model(title_info)
 
         # 项目阶段处理
         phase_id = get_phase_info(title_info[0], title_info[2])
 
         # 测试人员
-        tester = reserve_chinese(data['跟进QA'])
-        tester_id = process_tester(tester)
+        tester_id = process_tester(reserve_chinese(data['跟进QA']))
 
         # 开发人员
-        developer = reserve_chinese(data['指派给'])
-        developer_id = process_developer(developer)
+        developer_id = process_developer(reserve_chinese(data['指派给']))
 
         # BUG标签
         bug_type = process_bug_type(data['跟踪标签'])
@@ -89,6 +82,7 @@ def get_phase_info(project, plan):
     :param plan:
     :return:
     """
+    print(plan)
     project_id = int(process_project(project))
     plan_id = int(process_plan(plan))
 
@@ -116,9 +110,14 @@ def process_title(title):
     正常单：MG大赛直播竞猜抽奖-WEB-一轮测试-投票-投票数据异常
     废弃单：MG大赛直播竞猜抽奖-WEB-一轮测试-投票-投票数据异常-F
     """
+    if title.startswith("-"):
+        title_info = title[1:].split('-')
+        title_info[0] = '-' + title_info[0]
+    else:
+        title_info = title.split('-')
 
-    title_info = title.split('-')
     if not title_info[-1] == 'F':
+        print(title_info)
         return title_info
 
 
@@ -132,8 +131,8 @@ def process_model(title_info):
     # 细分平台
     model = title_info[1]
 
-    for i in range(3, len(title_info) - 2):
-        model = '-' + title_info[i]
+    for i in range(3, len(title_info) - 1):
+        model += '-' + title_info[i]
 
     return model
 
@@ -221,7 +220,8 @@ def process_time(time_str):
     :param time_str:
     :return:
     """
-    time_array = time.strptime(time_str, "%Y/%m/%d %H:%M")
+    print(time_str)
+    time_array = time.strptime(time_str, "%Y-%m-%d %H:%M")
     timestamp = int(time.mktime(time_array))
     print(timestamp)
     return timestamp

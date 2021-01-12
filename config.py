@@ -31,7 +31,7 @@ class Config(object):
             "前端BUG": 1,
             "服务端BUG": 2,
             "Android BUG": 3,
-            "IOS BUG": 4,
+            "iOS BUG": 4,
         }
 
 

@@ -9,8 +9,8 @@ import config
 import time
 
 
-def open_csv():
-    with open('../file/export.csv')as f:
+def open_csv(file_name):
+    with open(file_name)as f:
         f_csv = pandas.read_csv(f, encoding='utf-8', header=0, index_col=0)
         # print(f_csv['#', '跟踪标签', '主题', '状态', '作者', '指派给', '创建于', '跟进QA'])
         print(type(f_csv))
@@ -31,47 +31,52 @@ def process_data(csv_object):
         # 标题源数据处理
         title_info = process_title(data['主题'])
 
-        # BUG标题
-        title = title_info[-1]
+        if title_info:
+            # BUG标题
+            title = title_info[len(title_info) - 1]
 
-        # BUG模块
-        model = process_model(title_info)
+            # BUG模块
+            model = process_model(title_info)
 
-        # 项目阶段处理
-        phase_id = get_phase_info(title_info[0], title_info[2])
+            # 项目阶段处理
+            phase_id = get_phase_info(title_info[0], title_info[2])
 
-        # 测试人员
-        tester_id = process_tester(reserve_chinese(data['跟进QA']))
+            # 测试人员
+            tester_id = process_tester(reserve_chinese(data['跟进QA']))
 
-        # 开发人员
-        developer_id = process_developer(reserve_chinese(data['指派给']))
+            # 开发人员
+            developer_id = process_developer(reserve_chinese(data['指派给']))
 
-        # BUG标签
-        bug_type = process_bug_type(data['跟踪标签'])
+            # BUG标签
+            bug_type = process_bug_type(data['跟踪标签'])
 
-        # BUG类型
-        category = 'NULL'
+            # BUG类型
+            if "开发" in data['跟踪标签']:
+                category = 1
+            else:
+                category = 'NULL'
 
-        # 创建时间
-        create_time = process_time(data['创建于'])
+            # 创建时间
+            create_time = process_time(data['创建于'])
 
-        # 关闭时间
-        if pandas.isnull(data['关闭日期']):
-            is_close = False
-            close_time = ''
+            # 关闭时间
+            if pandas.isnull(data['关闭日期']):
+                is_close = False
+                close_time = ''
+            else:
+                is_close = True
+                close_time = process_time(data['完成日期'])
+
+            # 完成判定
+            if data['% 完成'] == 100:
+                is_finish = True
+            else:
+                is_finish = False
+
+            bug_data.append(get_bug_info(tester_id, developer_id, phase_id, bug_type, category, kb_id, title, model,
+                                         create_time, close_time, is_finish, is_close, False))
         else:
-            is_close = True
-            close_time = process_time(data['完成日期'])
-
-        # 完成判定
-        if data['% 完成'] == 100:
-            is_finish = True
-        else:
-            is_finish = False
-
-        bug_data.append(get_bug_info(tester_id, developer_id, phase_id, bug_type, category, kb_id, title, model,
-                                     create_time, close_time, is_finish, is_close, False))
-
+            continue
     return bug_data
 
 
@@ -115,10 +120,13 @@ def process_title(title):
         title_info[0] = '-' + title_info[0]
     else:
         title_info = title.split('-')
+    print(title_info[-1])
 
     if not title_info[-1] == 'F':
         print(title_info)
         return title_info
+    else:
+        return False
 
 
 def process_model(title_info):
@@ -277,8 +285,8 @@ def insert_bug_info(bug_info):
         print("BUG已存在")
 
 
-def main():
-    csv_object = open_csv()
+def main(file_name):
+    csv_object = open_csv(file_name)
     bug_data = process_data(csv_object)
     for data in bug_data:
         print(data)
@@ -286,4 +294,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    main('../file/export-2021-01-20.csv')

@@ -158,15 +158,3 @@ def edit_bug():
 
 def delete_bug():
     pass
-
-
-@bug_api.route('test', methods=['get'])
-def jmeter_test():
-    data = random.randint(1, 6)
-    print(data)
-    res = {
-        'msg': '成功',
-        'data': data,
-        'status': 1
-    }
-    return json.dumps(res, ensure_ascii=False)

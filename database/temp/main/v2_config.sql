@@ -1,6 +1,7 @@
 -- BUG类别配置
 INSERT INTO "bug_category" ("category_name")
 VALUES
+	("需求缺失"),
 	("功能缺失"),
 	("功能阻塞"),
 	("环境异常"),
@@ -15,7 +16,11 @@ VALUES
 	("前端BUG"),
 	("服务端BUG"),
 	("Android BUG"),
-	("IOS BUG");
+	("IOS BUG"),
+	("前端开发"),
+	("服务端开发"),
+	("Android开发"),
+	("IOS开发");
 	
 	
 -- 开发类别配置

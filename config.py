@@ -12,6 +12,8 @@ class Config(object):
 
     API_VERSION = 'v1'
 
+    FILES_PATH = workPath + '\\file\\'
+
     class BaseData(object):
         plan = {
             "冒烟测试": 1,

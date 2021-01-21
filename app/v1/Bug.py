@@ -25,7 +25,7 @@ def bug():
     if request.method == 'GET':
         return show_bug_info()
     elif request.method == 'POST':
-        return add_bug()
+        return add_bug_api()
     elif request.method == 'PUT':
         return edit_bug()
     elif request.method == 'DELETE':
@@ -116,7 +116,7 @@ def show_bug_info():
     return json.dumps(res, ensure_ascii=False)
 
 
-def add_bug():
+def add_bug_api():
     """
     新增BUG
     :return:

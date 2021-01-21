@@ -7,6 +7,24 @@ from libs.bug import *
 import pandas
 import config
 import time
+import tkinter
+from tkinter import filedialog
+
+
+def choose_file():
+    """
+    选择文件
+    :return:
+    """
+    windows = tkinter.Tk()
+    windows.withdraw()
+    # 选择文件
+    file_path = filedialog.askopenfilename()
+
+    # 打印文件路径
+    print('Filepath:', file_path)
+
+    return file_path
 
 
 def open_csv(file_name):
@@ -33,7 +51,7 @@ def process_data(csv_object):
 
         if title_info:
             # BUG标题
-            title = title_info[len(title_info) - 1]
+            title = title_info[-1]
 
             # BUG模块
             model = process_model(title_info)
@@ -51,10 +69,7 @@ def process_data(csv_object):
             bug_type = process_bug_type(data['跟踪标签'])
 
             # BUG类型
-            if "开发" in data['跟踪标签']:
-                category = 1
-            else:
-                category = 'NULL'
+            bug_category = process_bug_category(data['跟踪标签'])
 
             # 创建时间
             create_time = process_time(data['创建于'])
@@ -73,7 +88,7 @@ def process_data(csv_object):
             else:
                 is_finish = False
 
-            bug_data.append(get_bug_info(tester_id, developer_id, phase_id, bug_type, category, kb_id, title, model,
+            bug_data.append(get_bug_info(tester_id, developer_id, phase_id, bug_type, bug_category, kb_id, title, model,
                                          create_time, close_time, is_finish, is_close, False))
         else:
             continue
@@ -120,7 +135,6 @@ def process_title(title):
         title_info[0] = '-' + title_info[0]
     else:
         title_info = title.split('-')
-    print(title_info[-1])
 
     if not title_info[-1] == 'F':
         print(title_info)
@@ -156,6 +170,20 @@ def process_bug_type(bug_type):
         return type_id
     else:
         print('字段异常')
+
+
+def process_bug_category(bug_category):
+    """
+    BUG分类操作
+    :param bug_category:
+    :return:
+    """
+    if "开发" in bug_category:
+        category = 1
+    else:
+        category = 'NULL'
+
+    return category
 
 
 def process_project(project):
@@ -285,13 +313,30 @@ def insert_bug_info(bug_info):
         print("BUG已存在")
 
 
-def main(file_name):
+def local_main():
+    """
+    本地运行主逻辑
+    :return:
+    """
+    file_name = choose_file()
     csv_object = open_csv(file_name)
     bug_data = process_data(csv_object)
     for data in bug_data:
-        print(data)
+        insert_bug_info(data)
+
+
+def api_main(file_name):
+    """
+    API主逻辑
+    :param file_name 文件路径
+    :return:
+    """
+    csv_object = open_csv(file_name)
+    bug_data = process_data(csv_object)
+    for data in bug_data:
         insert_bug_info(data)
 
 
 if __name__ == '__main__':
-    main('../file/export-2021-01-20.csv')
+    local_main()
+    # main('../file/export-2021-01-20.csv')

@@ -1,5 +1,5 @@
 from common.NestableBlueprint import NestableBlueprint
-from app.v1 import Project, Tester, Developer, Bug
+from app.v1 import Project, Tester, Developer, Bug, Files
 
 
 def resign_blueprint(flask_server):
@@ -12,6 +12,7 @@ def resign_blueprint(flask_server):
     flask_server.register_blueprint(Tester.tester_api)
     flask_server.register_blueprint(Developer.developer_api)
     flask_server.register_blueprint(Bug.bug_api)
+    flask_server.register_blueprint(Files.files_api)
 
 
 # 实例化API二级蓝图

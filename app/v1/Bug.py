@@ -86,7 +86,10 @@ def show_bug_info():
         if base_info:
             developer_info = get_tester_base_info(base_info['testerId'])
             tester_info = get_developer_base_info(base_info['developerId'])
-            category = get_bug_category(base_info['bugCategory'])
+            if base_info['bugCategory']:
+                category = get_bug_category(base_info['bugCategory'])
+            else:
+                category = ''
             bug_type = get_bug_type(base_info['bugType'])
             project_info = get_project_info_with_phase(base_info['phaseId'])
             plan_info = get_plan_info_with_phase(base_info['phaseId'])

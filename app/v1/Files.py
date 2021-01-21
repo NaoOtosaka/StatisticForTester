@@ -2,7 +2,6 @@ from flask import Blueprint
 from flask import request
 import json
 import os
-import time
 
 from tools.csvDeal import *
 
@@ -25,11 +24,17 @@ def upload_csv():
         path = os.path.join(config.Config.FILES_PATH, file_name)
         print(type(path))
         file_obj.save(path)
-        api_main(path)
-        res = {
-            'msg': "成功",
-            'status': 1
-        }
+        try:
+            api_main(path)
+            res = {
+                'msg': "成功",
+                'status': 1
+            }
+        except:
+            res = {
+                'msg': "文件异常",
+                'status': 4001
+            }
     else:
         res = {
             'msg': "系统错误",

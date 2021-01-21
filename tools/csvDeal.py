@@ -339,4 +339,3 @@ def api_main(file_name):
 
 if __name__ == '__main__':
     local_main()
-    # main('../file/export-2021-01-20.csv')

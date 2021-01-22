@@ -111,7 +111,7 @@ def get_bug_base_info(bug_id):
 
     result = db(sql)
     if result:
-        print(result)
+        logger.debug(result)
         temp = {
             'bugId': result[0][0],
             'kbId': result[0][1],
@@ -153,7 +153,7 @@ def get_tester_info_with_bug(bug_id):
 
     result = db(sql)
     if result:
-        print(result)
+        logger.debug(result)
         temp = {
             'testerId': result[0][0],
             'testerName': result[0][1],
@@ -197,7 +197,7 @@ def check_bug_with_kb_id(kb_id):
     """ % kb_id
 
     result = db(sql)
-    print(result)
+    logger.debug(result)
     if result:
         return result[0][0]
     else:

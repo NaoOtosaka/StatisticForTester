@@ -5,8 +5,6 @@ from libs.project import *
 from libs.phase import *
 from libs.bug import *
 import pandas
-import config
-import time
 import tkinter
 from tkinter import filedialog
 from tools.log import *

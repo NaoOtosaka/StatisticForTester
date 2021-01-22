@@ -188,17 +188,41 @@ def check_bug_with_kb_id(kb_id):
     """
     sql = """
     SELECT
-    1
+    bug_id
     FROM
     bug
     WHERE
-    bug.kb_id = '%s'
+    bug.kb_id = %i
     LIMIT 1
     """ % kb_id
 
     result = db(sql)
-    logger.debug(result)
     if result:
+        logger.debug(result)
+        return result[0][0]
+    else:
+        return 0
+
+
+def check_bug_with_id(bug_id):
+    """
+    根据BUG ID检查数据是否存在, 若存在则返回id
+    :param bug_id:
+    :return:
+    """
+    sql = """
+    SELECT 
+    bug_id
+    FROM
+    bug
+    WHERE
+    bug.bug_id = %i
+    LIMIT 1
+    """ % bug_id
+
+    result = db(sql)
+    if result:
+        logger.debug(result)
         return result[0][0]
     else:
         return 0
@@ -227,7 +251,7 @@ def add_bug(tester_id, developer_id, phase_id, bug_type, category, kb_id, title,
     INSERT INTO "bug" ("tester_id", "developer_id", "phase_id", "bug_type", "category", "kb_id", "title", "model", 
     "create_time", "close_time", "is_finished", "is_closed", "is_online")
     VALUES
-    (%i, %i, %i, %i, %s, %i, '%s', '%s', '%i', %r, '%s', '%s', '%s')
+    (%i, %i, %i, %i, %i, %i, '%s', '%s', '%i', %r, '%s', '%s', '%s')
     """ % (tester_id, developer_id, phase_id, bug_type, category, kb_id, title, model, create_time, close_time,
            is_finished, is_closed, is_online)
     logger.debug(sql)
@@ -236,3 +260,73 @@ def add_bug(tester_id, developer_id, phase_id, bug_type, category, kb_id, title,
         return 1
     else:
         return 0
+
+
+def edit_bug(tester_id, developer_id, phase_id, bug_type, category, kb_id, title, model, create_time, close_time,
+             is_finished, is_closed, is_online):
+    """
+    编辑Bug
+    :param tester_id:
+    :param developer_id:
+    :param phase_id:
+    :param bug_type:
+    :param category:
+    :param kb_id:
+    :param title:
+    :param model:
+    :param create_time:
+    :param close_time:
+    :param is_finished:
+    :param is_closed:
+    :param is_online:
+    :return:
+    """
+    sql = """
+    UPDATE bug SET tester_id=%i, developer_id=%i, phase_id=%i, bug_type=%i, category=%i, title='%s', 
+    model='%s', create_time=%i, close_time=%i, is_finished='%s', is_closed='%s', is_online='%s' WHERE kb_id=%i;
+    """ % (tester_id, developer_id, phase_id, bug_type, category, title, model, create_time, close_time, is_finished,
+           is_closed, is_online, kb_id)
+
+    logger.debug(sql)
+    status = db(sql)
+    if status:
+        return 1
+    else:
+        return 0
+
+
+def delete_bug_with_id(bug_id):
+    """
+    通过BUG ID删除BUG
+    :param bug_id:
+    :return:
+    """
+    sql = """
+    DELETE FROM bug WHERE bug_id='%i';
+    """ % bug_id
+
+    logger.debug(sql)
+    status = db(sql)
+    if status:
+        return 1
+    else:
+        return 0
+
+
+def delete_bug_with_kb_id(kb_id):
+    """
+    通过KB ID删除BUG
+    :param kb_id:
+    :return:
+    """
+    sql = """
+    DELETE FROM bug WHERE kb_id='%i';
+    """ % kb_id
+
+    logger.debug(sql)
+    status = db(sql)
+    if status:
+        return 1
+    else:
+        return 0
+

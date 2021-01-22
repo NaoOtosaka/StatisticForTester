@@ -4,7 +4,6 @@ import logging
 import config
 
 
-
 def setLogger(log_name):
     """
     实例化日志对象

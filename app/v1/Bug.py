@@ -23,16 +23,16 @@ def bug_list():
     return show_bug_list()
 
 
-@bug_api.route('/', methods=['GET', 'POST', 'PUT', 'DELETE'])
+@bug_api.route('/', methods=['GET', 'POST', 'PUT', 'DELETE'], strict_slashes=False)
 def bug():
     if request.method == 'GET':
         return show_bug_info()
     elif request.method == 'POST':
         return add_bug_api()
     elif request.method == 'PUT':
-        return edit_bug()
+        return edit_bug_api()
     elif request.method == 'DELETE':
-        return delete_bug()
+        return delete_bug_api()
 
 
 def show_bug_list():
@@ -158,9 +158,60 @@ def add_bug_api():
     return json.dumps(res, ensure_ascii=False)
 
 
-def edit_bug():
-    pass
+def edit_bug_api():
+    """
+    编辑BUG
+    :return:
+    """
+    # 接收入参
+    kb_id = request.json.get('kbId')
+    bug_title = request.json.get('bugTitle')
+    bug_model = request.json.get('bugModel')
+    bug_category = request.json.get('bugCategory')
+    bug_type = request.json.get('bugType')
+
+    create_time = request.json.get('createTime')
+    close_time = request.json.get('closeTime')
+    is_closed = request.json.get('isClose')
+    is_online = request.json.get('inOnline')
+    is_finished = request.json.get('isFinish')
+
+    phase_id = request.json.get('phaseId')
+    developer_id = request.json.get('developerId')
+    tester_id = request.json.get('testerId')
+
+    # 唯一性判断
+    if check_bug_with_kb_id(kb_id):
+        status = edit_bug(tester_id, developer_id, phase_id, bug_type, bug_category, kb_id, bug_title, bug_model,
+                          create_time, close_time, is_finished, is_closed, is_online)
+        if status:
+            res = {'msg': '成功', 'status': 1}
+        else:
+            res = {'msg': '系统错误', 'status': 500}
+    else:
+        res = {'msg': '该缺陷不存在', 'status': 2001}
+
+    return json.dumps(res, ensure_ascii=False)
 
 
-def delete_bug():
-    pass
+def delete_bug_api():
+    """
+    删除BUG
+    :return:
+    """
+    # 接收入参
+    bug_id = int(request.values.get('bugId'))
+
+    # 存在性判断
+    if check_bug_with_id(bug_id):
+        status = delete_bug_with_id(bug_id)
+        if status:
+            res = {'msg': '成功', 'status': 1}
+        else:
+            res = {'msg': '系统错误', 'status': 500}
+    else:
+        res = {'msg': '该缺陷不存在', 'status': 2001}
+
+    return json.dumps(res, ensure_ascii=False)
+
+

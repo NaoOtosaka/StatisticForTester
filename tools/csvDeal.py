@@ -48,7 +48,7 @@ def process_data(csv_object):
         kb_id = index
 
         # 标题源数据处理
-        title_info = process_title(data['主题'])
+        title_info = process_title(data['主题'], kb_id)
 
         if title_info:
             # BUG标题
@@ -78,7 +78,7 @@ def process_data(csv_object):
             # 关闭时间
             if pandas.isnull(data['关闭日期']):
                 is_close = False
-                close_time = ''
+                close_time = 0
             else:
                 is_close = True
                 close_time = process_time(data['完成日期'])
@@ -118,9 +118,10 @@ def get_phase_info(project, plan):
             return False
 
 
-def process_title(title):
+def process_title(title, kb_id):
     """
     标题信息处理
+    :param kb_id:
     :type title str
     :param title:
     :return:
@@ -142,6 +143,11 @@ def process_title(title):
         logger.info(title_info)
         return title_info
     else:
+        # 当存在-F后缀时,检测BUG是否已入库,若已入库则删除对应BUG
+        bug_status = check_bug_with_kb_id(kb_id)
+        if bug_status:
+            delete_bug_with_kb_id(kb_id)
+
         return False
 
 
@@ -183,7 +189,7 @@ def process_bug_category(bug_category):
     if "开发" in bug_category:
         category = 1
     else:
-        category = 'NULL'
+        category = 9
 
     return category
 
@@ -312,7 +318,22 @@ def insert_bug_info(bug_info):
             bug_info[12]
         )
     else:
-        logger.warning("BUG已存在")
+        edit_bug(
+            bug_info[0],
+            bug_info[1],
+            bug_info[2],
+            bug_info[3],
+            bug_info[4],
+            bug_info[5],
+            bug_info[6],
+            bug_info[7],
+            bug_info[8],
+            bug_info[9],
+            bug_info[10],
+            bug_info[11],
+            bug_info[12]
+        )
+        logger.warning("BUG已更新")
 
 
 def local_main():

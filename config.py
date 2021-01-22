@@ -7,6 +7,7 @@ class Config(object):
 
     # 数据库路径配置
     DB_HOST = workPath + '/database/data.db'
+
     # 是否启动外键约束
     USE_FOREIGN = True
 
@@ -56,9 +57,26 @@ class DevelopmentConfig(Config):
     API_HOST = '0.0.0.0'
     API_PORT = 9222
 
+    ENCODING = 'utf-8'
+
 
 class ProjectionConfig(Config):
     DEBUG = False
+
+    workPath = '/Users/pijingwen/PycharmProjects/statistic'
+
+    # 数据库路径配置
+    DB_HOST = workPath + '/database/data.db'
+
+    # 主机配置
+    API_HOST = '0.0.0.0'
+    API_PORT = 9222
+
+    # 文件解析编码配置
+    ENCODING = 'gbk'
+
+    # 文件路径配置
+    FILES_PATH = workPath + '/file/'
 
 
 # 开发配置

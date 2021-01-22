@@ -1,6 +1,8 @@
+from tools.timeDeal import *
+
 import logging
 import config
-import time
+
 
 
 def setLogger(log_name):
@@ -22,7 +24,7 @@ def setLogger(log_name):
     )
 
     # 设定输出文件名
-    timestamp = int(round(time.time() * 1000))
+    timestamp = get_today_timestamp()
     log_file_name = str(timestamp) + '.log'
 
     # 创建handler

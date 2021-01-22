@@ -1,4 +1,8 @@
 from tools.database import db
+from tools.log import *
+
+# 实例化日志对象
+logger = setLogger('bug')
 
 
 def get_bug_list():
@@ -43,7 +47,7 @@ def get_bug_list():
 
     result = db(sql)
     if result:
-        print(result)
+        logger.debug(result)
 
         for i in range(len(result)):
             temp.append(
@@ -226,7 +230,7 @@ def add_bug(tester_id, developer_id, phase_id, bug_type, category, kb_id, title,
     (%i, %i, %i, %i, %s, %i, '%s', '%s', '%i', %r, '%s', '%s', '%s')
     """ % (tester_id, developer_id, phase_id, bug_type, category, kb_id, title, model, create_time, close_time,
            is_finished, is_closed, is_online)
-    print(sql)
+    logger.debug(sql)
     status = db(sql)
     if status:
         return 1

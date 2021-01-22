@@ -1,7 +1,6 @@
 from flask import Blueprint
 from flask import request
 import json
-import random
 
 from libs.bug import *
 from libs.tester import *
@@ -9,6 +8,10 @@ from libs.developer import *
 from libs.bug_category import *
 from libs.bug_type import *
 from libs.phase import *
+from tools.log import *
+
+# 实例化日志对象
+logger = setLogger('bug_api')
 
 
 # 实例化蓝图
@@ -82,7 +85,7 @@ def show_bug_info():
 
     if bug_id:
         base_info = get_bug_base_info(bug_id)
-        print(base_info)
+        logger.debug(base_info)
         if base_info:
             developer_info = get_tester_base_info(base_info['testerId'])
             tester_info = get_developer_base_info(base_info['developerId'])

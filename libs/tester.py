@@ -1,4 +1,8 @@
 from libs.project import *
+from tools.log import *
+
+# 实例化日志对象
+logger = setLogger('tester')
 
 
 def get_tester_base_info(tester_id):
@@ -26,7 +30,7 @@ def get_tester_base_info(tester_id):
     # 获取测试基础信息
     result = db(sql)
     if result:
-        print(result)
+        logger.debug(result)
         temp = {
             'testerId': result[0][0],
             'testerName': result[0][1],
@@ -61,7 +65,7 @@ def get_tester_list():
 
     result = db(sql)
     if result:
-        print(result)
+        logger.debug(result)
 
         for i in range(len(result)):
             temp.append(
@@ -144,7 +148,7 @@ def get_project_list_with_tester(tester_id):
     result = db(sql)
 
     if result:
-        print(result)
+        logger.debug(result)
 
         for i in range(len(result)):
             temp.append(
@@ -183,7 +187,7 @@ def get_bug_with_tester_and_project(tester_id, project_id):
 
     result = db(sql)
     if result:
-        print(result)
+        logger.debug(result)
 
         for i in range(len(result)):
             temp.append(result[i][0])
@@ -210,8 +214,8 @@ def check_tester_with_id(tester_id):
     """ % tester_id
 
     result = db(sql)
-    print(result)
     if result:
+        logger.debug(result)
         return True
     else:
         return False
@@ -234,8 +238,8 @@ def check_tester_with_name(tester_name):
     """ % tester_name
 
     result = db(sql)
-    print(result)
     if result:
+        logger.debug(result)
         return result[0][0]
     else:
         return 0
@@ -258,8 +262,8 @@ def check_tester_with_email(tester_email):
     """ % tester_email
 
     result = db(sql)
-    print(result)
     if result:
+        logger.debug(result)
         return result[0][0]
     else:
         return 0
@@ -334,8 +338,8 @@ def get_tester_insert_id():
     """
 
     result = db(sql)
-
     if result:
+        logger.debug(result)
         return result[0][0]
     else:
         return False

@@ -3,7 +3,10 @@ from flask import request
 import json
 
 from libs.project import *
+from tools.log import *
 
+# 实例化日志对象
+logger = setLogger('project_api')
 
 # 实例化蓝图
 project_api = Blueprint('project', __name__, url_prefix='/project')
@@ -47,6 +50,8 @@ def show_project_info():
         }
     """
     project_id = int(request.values.get('projectId'))
+
+    logger.info(project_id)
 
     if project_id:
         base_info = get_project_base_info(project_id)
@@ -115,8 +120,10 @@ def add_project_api():
     """
     # 接收入参
     planner_id = int(request.json.get('plannerId'))
-    print(planner_id)
     project_name = request.json.get('projectName')
+
+    logger.info(planner_id)
+    logger.info(project_name)
 
     if project_name and planner_id:
         if check_project_with_name(project_name):
@@ -144,9 +151,9 @@ def edit_project_api():
     project_name = request.json.get('projectName')
 
     if project_id and planner_id and project_name:
-        sql = 'SELECT * FROM project WHERE project_id = "%i";' % project_id
+        sql = "SELECT * FROM project WHERE project_id = '%i';" % project_id
         if db(sql):
-            update_sql = 'UPDATE project SET planner_id="%i", project_name="%s" WHERE project_id="%i"'\
+            update_sql = "UPDATE project SET planner_id='%i', project_name='%s' WHERE project_id='%i';"\
                          % (planner_id, project_name, project_id)
             status = db(update_sql)
             if status:
@@ -170,9 +177,9 @@ def delete_project_api():
     project_id = int(request.json.get('projectId'))
 
     if project_id:
-        sql = 'SELECT * FROM project WHERE project_id = "%i";' % project_id
+        sql = "SELECT * FROM project WHERE project_id = '%i';" % project_id
         if db(sql):
-            delete_sql = 'DELETE FROM project WHERE project_id="%i";' % project_id
+            delete_sql = "DELETE FROM project WHERE project_id='%i';" % project_id
             status = db(delete_sql)
             if status:
                 res = {'msg': '成功', 'status': 1}

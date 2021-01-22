@@ -16,6 +16,6 @@ def resign_blueprint(flask_server):
 
 
 # 实例化API二级蓝图
-api_v1 = NestableBlueprint('api_vi', __name__, url_prefix='/api/v1')
+api_v1 = NestableBlueprint('api_v1', __name__, url_prefix='/api/v1')
 
 resign_blueprint(api_v1)

@@ -11,9 +11,8 @@ class Config(object):
     # 是否启动外键约束
     USE_FOREIGN = True
 
+    # API版本
     API_VERSION = 'v1'
-
-    FILES_PATH = workPath + '\\file\\'
 
     class BaseData(object):
         plan = {
@@ -52,18 +51,38 @@ class Config(object):
 
 
 class DevelopmentConfig(Config):
+    # API调试模式
     DEBUG = True
 
+    # 日志路径配置
+    LOG_PATH = Config.workPath + '\\log\\'
+
+    # 日志输出等级
+    LOG_LEVEL = 'DEBUG'
+
+    # 主机配置
     API_HOST = '0.0.0.0'
     API_PORT = 9222
 
+    # 文件解析编码配置
     ENCODING = 'utf-8'
+
+    # 文件路径配置
+    FILES_PATH = Config.workPath + '\\file\\'
 
 
 class ProjectionConfig(Config):
+    # API调试模式
     DEBUG = False
 
+    # 工作区配置
     workPath = '/Users/pijingwen/PycharmProjects/statistic'
+
+    # 日志输出等级
+    LOG_LEVEL = 'WARNING'
+
+    # 日志路径配置
+    LOG_PATH = workPath + '/log/'
 
     # 数据库路径配置
     DB_HOST = workPath + '/database/data.db'

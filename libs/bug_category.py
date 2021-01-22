@@ -1,4 +1,8 @@
 from tools.database import db
+from tools.log import *
+
+# 实例化日志对象
+logger = setLogger('bug_category')
 
 
 def get_bug_category(category_id):
@@ -18,7 +22,7 @@ def get_bug_category(category_id):
 
     result = db(sql)
     if result:
-        print(result)
+        logger.debug(result)
         return result[0][0]
     else:
         return 0
@@ -41,7 +45,7 @@ def check_category_with_name(category_name):
 
     result = db(sql)
     if result:
-        print(result)
+        logger.debug(result)
         return result[0][0]
     else:
         return 0

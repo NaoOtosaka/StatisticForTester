@@ -1,4 +1,8 @@
 from tools.database import db
+from tools.log import *
+
+# 实例化日志对象
+logger = setLogger('phase')
 
 
 def get_project_info_with_phase(phase_id):
@@ -24,7 +28,7 @@ def get_project_info_with_phase(phase_id):
 
     result = db(sql)
     if result:
-        print(result)
+        logger.debug(result)
         temp = {
             'projectId': result[0][0],
             'projectName': result[0][1]
@@ -57,7 +61,7 @@ def get_plan_info_with_phase(phase_id):
 
     result = db(sql)
     if result:
-        print(result)
+        logger.debug(result)
         temp = {
             'planId': result[0][0],
             'planName': result[0][1]
@@ -85,10 +89,9 @@ def get_plan_with_project_id(project_id):
     temp = []
 
     result = db(sql)
-    print(result)
 
     if result:
-        print(result)
+        logger.debug(result)
         for i in range(len(result)):
             temp.append(
                 {
@@ -119,10 +122,9 @@ def get_plan_with_project_and_plan(project_id, plan_id):
     temp = []
 
     result = db(sql)
-    print(result)
 
     if result:
-        print(result)
+        logger.debug(result)
         for i in range(len(result)):
             temp.append(result[i][0])
         return temp
@@ -164,6 +166,7 @@ def get_phase_insert_id():
     result = db(sql)
 
     if result:
+        logger.debug(result)
         return result[0][0]
     else:
         return False

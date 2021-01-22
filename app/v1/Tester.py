@@ -3,6 +3,11 @@ from flask import request
 import json
 
 from libs.tester import *
+from tools.log import *
+
+# 实例化日志对象
+logger = setLogger('tester_api')
+
 
 # 实例化蓝图
 tester_api = Blueprint('tester', __name__, url_prefix='/tester')
@@ -106,8 +111,8 @@ def add_tester_api():
     # 接受入参
     tester_name = request.json.get('testerName')
     tester_email = request.json.get('testerEmail')
-    print(tester_name)
-    print(tester_email)
+    logger.debug(tester_name)
+    logger.debug(tester_email)
 
     if tester_name and tester_email:
         if check_tester_with_email(tester_email):
@@ -136,9 +141,9 @@ def edit_tester_api():
     tester_id = int(request.json.get('testerId'))
     tester_name = request.json.get('testerName')
     tester_email = request.json.get('testerEmail')
-    print(tester_id)
-    print(tester_name)
-    print(tester_email)
+    logger.debug(tester_id)
+    logger.debug(tester_name)
+    logger.debug(tester_email)
 
     if tester_name and tester_email and tester_id:
         if check_tester_with_id(tester_id):

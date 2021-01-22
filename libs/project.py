@@ -1,4 +1,8 @@
 from tools.database import db
+from tools.log import *
+
+# 实例化日志对象
+logger = setLogger('project')
 
 
 def get_project_list():
@@ -23,7 +27,7 @@ def get_project_list():
 
     result = db(sql)
     if result:
-        print(result)
+        logger.debug(result)
 
         for i in range(len(result)):
             temp.append(
@@ -64,7 +68,7 @@ def get_project_base_info(project_id):
     # 获取项目基础信息
     result = db(sql)
     if result:
-        print(result)
+        logger.debug(result)
         temp = {
                 'projectId': result[0][0],
                 'projectName': result[0][1],
@@ -103,7 +107,7 @@ def get_developer_with_project(project_id):
 
     result = db(sql)
     if result:
-        print(result)
+        logger.debug(result)
 
         for i in range(len(result)):
             temp.append(
@@ -143,7 +147,7 @@ def get_tester_with_project(project_id):
 
     result = db(sql)
     if result:
-        print(result)
+        logger.debug(result)
 
         for i in range(len(result)):
             temp.append(
@@ -187,7 +191,7 @@ def get_phase_info_with_project(project_id):
 
     result = db(sql)
     if result:
-        print(result)
+        logger.debug(result)
 
         for i in range(len(result)):
             temp.append(
@@ -225,7 +229,7 @@ def get_bug_list_with_project(project_id):
 
     result = db(sql)
     if result:
-        print(result)
+        logger.debug(result)
 
         for i in range(len(result)):
             temp.append(result[i][0])
@@ -250,8 +254,8 @@ def check_project_with_name(project_name):
     """ % project_name
 
     result = db(sql)
-    print(result)
     if result:
+        logger.debug(result)
         return result[0][0]
     else:
         return 0

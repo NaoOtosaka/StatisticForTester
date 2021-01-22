@@ -9,6 +9,10 @@ import config
 import time
 import tkinter
 from tkinter import filedialog
+from tools.log import *
+
+# 实例化日志对象
+logger = setLogger('csvDeal')
 
 
 def choose_file():
@@ -22,7 +26,7 @@ def choose_file():
     file_path = filedialog.askopenfilename()
 
     # 打印文件路径
-    print('Filepath:', file_path)
+    logger.info('Filepath:', file_path)
 
     return file_path
 
@@ -31,7 +35,6 @@ def open_csv(file_name):
     with open(file_name)as f:
         f_csv = pandas.read_csv(f, encoding='utf-8', header=0, index_col=0)
         # print(f_csv['#', '跟踪标签', '主题', '状态', '作者', '指派给', '创建于', '跟进QA'])
-        print(type(f_csv))
         return f_csv
 
 
@@ -102,7 +105,8 @@ def get_phase_info(project, plan):
     :param plan:
     :return:
     """
-    print(plan)
+    logger.debug(plan)
+
     project_id = int(process_project(project))
     plan_id = int(process_plan(plan))
 
@@ -137,7 +141,7 @@ def process_title(title):
         title_info = title.split('-')
 
     if not title_info[-1] == 'F':
-        print(title_info)
+        logger.info(title_info)
         return title_info
     else:
         return False
@@ -169,7 +173,7 @@ def process_bug_type(bug_type):
         type_id = config.Config.BaseData.bug_type[bug_type]
         return type_id
     else:
-        print('字段异常')
+        logger.error('字段异常')
 
 
 def process_bug_category(bug_category):
@@ -195,7 +199,7 @@ def process_project(project):
     # 测试用默认参数
     planner = 1
 
-    print(project)
+    logger.debug(project)
 
     project_id = check_project_with_name(project)
     # 项目不存在则创建
@@ -215,7 +219,7 @@ def process_plan(plan):
         plan_id = config.Config.BaseData.plan[plan]
         return plan_id
     else:
-        print('字段异常')
+        logger.error('系统异常')
 
 
 def process_tester(tester):
@@ -256,10 +260,10 @@ def process_time(time_str):
     :param time_str:
     :return:
     """
-    print(time_str)
+    logger.debug(time_str)
     time_array = time.strptime(time_str, "%Y-%m-%d %H:%M")
     timestamp = int(time.mktime(time_array))
-    print(timestamp)
+    logger.info(timestamp)
     return timestamp
 
 
@@ -310,7 +314,7 @@ def insert_bug_info(bug_info):
             bug_info[12]
         )
     else:
-        print("BUG已存在")
+        logger.warning("BUG已存在")
 
 
 def local_main():

@@ -1,6 +1,10 @@
 import sqlite3
 
 from config import CONF
+from tools.log import *
+
+# 实例化日志对象
+logger = setLogger('databases')
 
 
 def db(sql=None):
@@ -11,11 +15,11 @@ def db(sql=None):
     """
     # 挂载链接
     connect = connect_database()
+    logger.info(connect)
     # 传入查询时
     if sql:
         # 执行SQL
         result = do_query(connect, sql)
-
         connect.close()
         return result
     # 关闭链接
@@ -96,9 +100,11 @@ def insert(connect, sql):
         result = 1
     except sqlite3.DatabaseError:
         result = 0
+        logger.error(sqlite3.DatabaseError)
         print(sqlite3.DatabaseError)
     except sqlite3.Error:
         result = 0
+        logger.error(sqlite3.Error)
         print(sqlite3.Error)
 
     return result
@@ -119,9 +125,11 @@ def update(connect, sql):
         result = 1
     except sqlite3.DatabaseError:
         result = 0
+        logger.error(sqlite3.DatabaseError)
         print(sqlite3.DatabaseError)
     except sqlite3.Error:
         result = 0
+        logger.error(sqlite3.Error)
         print(sqlite3.Error)
 
     return result
@@ -142,9 +150,11 @@ def delete(connect, sql):
         result = 1
     except sqlite3.DatabaseError:
         result = 0
+        logger.error(sqlite3.DatabaseError)
         print(sqlite3.DatabaseError)
     except sqlite3.Error:
         result = 0
+        logger.error(sqlite3.Error)
         print(sqlite3.Error)
 
     return result

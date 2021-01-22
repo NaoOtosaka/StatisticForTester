@@ -4,6 +4,10 @@ import json
 
 from libs.developer import *
 from libs.develop_type import *
+from tools.log import *
+
+# 实例化日志对象
+logger = setLogger('developer_api')
 
 
 # 实例化蓝图
@@ -114,9 +118,9 @@ def edit_developer_api():
     developer_name = request.json.get('developerName')
     developer_email = request.json.get('developerEmail')
     develop_type = request.json.get('developType')
-    print(developer_id)
-    print(developer_name)
-    print(developer_email)
+    logger.debug(developer_id)
+    logger.debug(developer_name)
+    logger.debug(developer_email)
 
     if developer_name and developer_email and developer_id:
         sql = 'SELECT * FROM developer WHERE developer.developer_id = "%s";' % developer_id

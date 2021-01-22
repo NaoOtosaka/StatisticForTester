@@ -1,4 +1,8 @@
 from tools.database import db
+from tools.log import *
+
+# 实例化日志对象
+logger = setLogger('developer_type')
 
 
 def get_develop_type_with_type_id(type_id):
@@ -17,8 +21,8 @@ def get_develop_type_with_type_id(type_id):
     """ % type_id
 
     result = db(sql)
-    print(result)
     if result:
+        logger.debug(result)
         return result[0][0]
     else:
         return []
@@ -39,8 +43,8 @@ def select_develop_type_exist(type_id):
         """ % type_id
 
     result = db(sql)
-    print(result)
     if result:
+        logger.debug(result)
         return True
     else:
         return False

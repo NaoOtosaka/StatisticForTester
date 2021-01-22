@@ -4,6 +4,11 @@ import json
 import os
 
 from tools.csvDeal import *
+from tools.log import *
+
+# 实例化日志对象
+logger = setLogger('files_api')
+
 
 # 实例化蓝图
 files_api = Blueprint('files', __name__, url_prefix='/files')
@@ -16,13 +21,13 @@ def upload_csv():
     :return:
     """
     file_obj = request.files['csvFile']
-    print(file_obj)
+    logger.debug(file_obj)
     if file_obj:
         timestamp = int(round(time.time() * 1000))
         file_name = 'yxz-' + str(timestamp) + '.csv'
-        print(file_obj)
+        logger.debug(file_obj)
         path = os.path.join(config.CONF.FILES_PATH, file_name)
-        print(type(path))
+        logger.debug(type(path))
         file_obj.save(path)
         try:
             api_main(path)

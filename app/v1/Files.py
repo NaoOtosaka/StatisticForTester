@@ -21,7 +21,7 @@ def upload_csv():
         timestamp = int(round(time.time() * 1000))
         file_name = 'yxz-' + str(timestamp) + '.csv'
         print(file_obj)
-        path = os.path.join(config.Config.FILES_PATH, file_name)
+        path = os.path.join(config.CONF.FILES_PATH, file_name)
         print(type(path))
         file_obj.save(path)
         try:

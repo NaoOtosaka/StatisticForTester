@@ -23,10 +23,9 @@ def choose_file():
     # 选择文件
     file_path = filedialog.askopenfilename()
 
-    # 打印文件路径
-    logger.info('Filepath:', file_path)
-
     if file_path:
+        # 打印文件路径
+        logger.info('Filepath:' + file_path)
         return file_path
     else:
         print('未选择目录')

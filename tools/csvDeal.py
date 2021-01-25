@@ -44,55 +44,61 @@ def process_data(csv_object):
     bug_data = []
     # 数据遍历
     for index, data in csv_object.iterrows():
-        # 看板id
-        kb_id = index
 
-        # 标题源数据处理
-        title_info = process_title(data['主题'], kb_id)
+        if 'BUG' in data['跟踪标签'] or '开发' in data['跟踪标签']:
+            # 看板id
+            kb_id = index
 
-        if title_info:
-            # BUG标题
-            title = title_info[-1]
+            # 标题源数据处理
+            title_info = process_title(data['主题'], kb_id)
 
-            # BUG模块
-            model = process_model(title_info)
+            if title_info:
+                # BUG标题
+                title = title_info[-1]
 
-            # 项目阶段处理
-            phase_id = get_phase_info(title_info[0], title_info[2])
+                # BUG模块
+                model = process_model(title_info)
 
-            # 测试人员
-            tester_id = process_tester(reserve_chinese(data['跟进QA']))
+                # 项目阶段处理
+                phase_id = get_phase_info(title_info[0], title_info[2])
 
-            # 开发人员
-            developer_id = process_developer(reserve_chinese(data['指派给']))
+                # 测试人员
+                tester_id = process_tester(reserve_chinese(data['跟进QA']))
 
-            # BUG标签
-            bug_type = process_bug_type(data['跟踪标签'])
+                # 开发人员
+                developer_id = process_developer(reserve_chinese(data['指派给']))
 
-            # BUG类型
-            bug_category = process_bug_category(data['跟踪标签'])
+                # BUG标签
+                bug_type = process_bug_type(data['跟踪标签'])
 
-            # 创建时间
-            create_time = process_time(data['创建于'])
+                # BUG类型
+                bug_category = process_bug_category(data['跟踪标签'])
 
-            # 关闭时间
-            if pandas.isnull(data['关闭日期']):
-                is_close = False
-                close_time = 0
+                # 创建时间
+                create_time = process_time(data['创建于'])
+
+                # 关闭时间
+                if pandas.isnull(data['关闭日期']):
+                    is_close = False
+                    close_time = 0
+                else:
+                    is_close = True
+                    close_time = process_time(data['完成日期'])
+
+                # 完成判定
+                if data['% 完成'] == 100:
+                    is_finish = True
+                else:
+                    is_finish = False
+
+                bug_data.append(get_bug_info(tester_id, developer_id, phase_id, bug_type, bug_category, kb_id, title, model,
+                                             create_time, close_time, is_finish, is_close, False))
             else:
-                is_close = True
-                close_time = process_time(data['完成日期'])
+                continue
 
-            # 完成判定
-            if data['% 完成'] == 100:
-                is_finish = True
-            else:
-                is_finish = False
-
-            bug_data.append(get_bug_info(tester_id, developer_id, phase_id, bug_type, bug_category, kb_id, title, model,
-                                         create_time, close_time, is_finish, is_close, False))
         else:
             continue
+
     return bug_data
 
 
@@ -173,8 +179,8 @@ def process_bug_type(bug_type):
     :param bug_type:
     :return:
     """
-    if bug_type in config.Config.BaseData.bug_type:
-        type_id = config.Config.BaseData.bug_type[bug_type]
+    if bug_type in config.CONF.BaseData.bug_type:
+        type_id = config.CONF.BaseData.bug_type[bug_type]
         return type_id
     else:
         logger.error('字段异常')
@@ -187,9 +193,9 @@ def process_bug_category(bug_category):
     :return:
     """
     if "开发" in bug_category:
-        category = 1
+        category = config.CONF.BaseData.bug_category['需求缺失']
     else:
-        category = 9
+        category = config.CONF.BaseData.bug_category['未选定']
 
     return category
 
@@ -219,8 +225,8 @@ def process_plan(plan):
     :param plan:
     :return:
     """
-    if plan in config.Config.BaseData.plan:
-        plan_id = config.Config.BaseData.plan[plan]
+    if plan in config.CONF.BaseData.plan:
+        plan_id = config.CONF.BaseData.plan[plan]
         return plan_id
     else:
         logger.error('系统异常')

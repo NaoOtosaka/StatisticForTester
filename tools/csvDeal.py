@@ -26,14 +26,21 @@ def choose_file():
     # 打印文件路径
     logger.info('Filepath:', file_path)
 
-    return file_path
+    if file_path:
+        return file_path
+    else:
+        print('未选择目录')
+        return False
 
 
 def open_csv(file_name):
-    with open(file_name)as f:
-        f_csv = pandas.read_csv(f, encoding='utf-8', header=0, index_col=0)
-        # print(f_csv['#', '跟踪标签', '主题', '状态', '作者', '指派给', '创建于', '跟进QA'])
-        return f_csv
+    if file_name:
+        with open(file_name)as f:
+            f_csv = pandas.read_csv(f, encoding='utf-8', header=0, index_col=0)
+            # print(f_csv['#', '跟踪标签', '主题', '状态', '作者', '指派给', '创建于', '跟进QA'])
+            return f_csv
+    else:
+        return False
 
 
 def process_data(csv_object):
@@ -348,10 +355,11 @@ def local_main():
     :return:
     """
     file_name = choose_file()
-    csv_object = open_csv(file_name)
-    bug_data = process_data(csv_object)
-    for data in bug_data:
-        insert_bug_info(data)
+    if file_name:
+        csv_object = open_csv(file_name)
+        bug_data = process_data(csv_object)
+        for data in bug_data:
+            insert_bug_info(data)
 
 
 def api_main(file_name):

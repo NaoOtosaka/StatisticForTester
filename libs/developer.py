@@ -1,4 +1,5 @@
 from libs.project import *
+from libs.develop_type import *
 from tools.log import *
 
 # 实例化日志对象
@@ -74,10 +75,11 @@ def get_developer_list():
         logger.debug(result)
 
         for i in range(len(result)):
+            type_name = get_develop_type_with_type_id(result[i][1])
             temp.append(
                 {
                     'developerId': result[i][0],
-                    'typeId': result[i][1],
+                    'typeId': type_name,
                     'developerName': result[i][2],
                     'developerEmail': result[i][3]
                 }

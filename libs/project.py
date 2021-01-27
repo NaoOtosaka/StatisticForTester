@@ -33,8 +33,8 @@ def get_project_list():
             temp.append(
                 {
                     'projectId': result[i][0],
-                    'projectName': result[i][0],
-                    'planner': result[i][0]
+                    'projectName': result[i][1],
+                    'planner': result[i][2]
                 }
             )
         return temp

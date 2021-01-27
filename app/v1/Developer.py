@@ -20,7 +20,18 @@ def developer_list():
     返回开发者列表
     :return:
     """
-    return json.dumps(get_developer_list(), ensure_ascii=False)
+    result = get_developer_list()
+
+    if result:
+        res = {
+            'msg': '成功',
+            'data': result,
+            'status': 1
+        }
+    else:
+        res = {'msg': '无人员', 'status': 2001}
+
+    return json.dumps(res, ensure_ascii=False)
 
 
 @developer_api.route('/', methods=['GET', 'POST', 'PUT', 'DELETE'])

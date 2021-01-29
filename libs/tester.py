@@ -343,3 +343,28 @@ def get_tester_insert_id():
         return result[0][0]
     else:
         return False
+
+
+def get_bug_count_with_tester():
+    """
+    获取每个测试人员负责BUG数
+    :return:
+    """
+    sql = """
+    SELECT
+    tester.name,
+    Count(bug.bug_id) AS bugNum
+    FROM
+    tester
+    INNER JOIN bug ON bug.tester_id = tester.tester_id
+    GROUP BY
+    tester.tester_id
+    """
+
+    result = db(sql)
+    if result:
+        logger.debug(result)
+        return result
+    else:
+        return False
+

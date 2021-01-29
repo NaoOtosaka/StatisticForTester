@@ -84,12 +84,12 @@ def process_data(csv_object):
                 create_time = process_time(data['创建于'])
 
                 # 关闭时间
-                if pandas.isnull(data['关闭日期']):
+                if pandas.isnull(data['关闭日期']) or pandas.isnull(data['完成日期']):
                     is_close = False
                     close_time = 0
                 else:
                     is_close = True
-                    close_time = process_time(data['完成日期'])
+                    close_time = process_close_time(data['完成日期'])
 
                 # 完成判定
                 if data['% 完成'] == 100:
@@ -278,6 +278,19 @@ def process_time(time_str):
     """
     logger.debug(time_str)
     time_array = time.strptime(time_str, "%Y-%m-%d %H:%M")
+    timestamp = int(time.mktime(time_array))
+    logger.info(timestamp)
+    return timestamp
+
+
+def process_close_time(time_str):
+    """
+    csv时间字符串转时间戳
+    :param time_str:
+    :return:
+    """
+    logger.debug(time_str)
+    time_array = time.strptime(time_str, "%Y-%m-%d")
     timestamp = int(time.mktime(time_array))
     logger.info(timestamp)
     return timestamp

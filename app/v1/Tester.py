@@ -183,3 +183,23 @@ def delete_tester_api():
         res = {'msg': '参数错误', 'status': 4001}
 
     return json.dumps(res, ensure_ascii=False)
+
+
+@tester_api.route('/bug_count', methods=['get'])
+def bug_count_data():
+    """
+    人员BUG计数统计
+    :return:
+    """
+    result = get_bug_count_with_tester()
+
+    if result:
+        res = {
+            'msg': '成功',
+            'data': result,
+            'status': 1
+        }
+    else:
+        res = {'msg': '无相关统计信息', 'status': 2001}
+
+    return json.dumps(res, ensure_ascii=False)

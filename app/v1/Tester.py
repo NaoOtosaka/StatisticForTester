@@ -203,3 +203,47 @@ def bug_count_data():
         res = {'msg': '无相关统计信息', 'status': 2001}
 
     return json.dumps(res, ensure_ascii=False)
+
+
+@tester_api.route('/bug_type', methods=['get'])
+def bug_type_data():
+    """
+    根据测试人员或许BUG类型
+    :return:
+    """
+    tester_id = int(request.values.get('testerId'))
+
+    result = get_bug_type_count_with_tester(tester_id)
+
+    if result:
+        res = {
+            'msg': '成功',
+            'data': result,
+            'status': 1
+        }
+    else:
+        res = {'msg': '无相关统计信息', 'status': 2001}
+
+    return json.dumps(res, ensure_ascii=False)
+
+
+@tester_api.route('/bug_category', methods=['get'])
+def bug_category_data():
+    """
+    根据测试人员或许BUG类型
+    :return:
+    """
+    tester_id = int(request.values.get('testerId'))
+
+    result = get_bug_category_count_with_tester(tester_id)
+
+    if result:
+        res = {
+            'msg': '成功',
+            'data': result,
+            'status': 1
+        }
+    else:
+        res = {'msg': '无相关统计信息', 'status': 2001}
+
+    return json.dumps(res, ensure_ascii=False)

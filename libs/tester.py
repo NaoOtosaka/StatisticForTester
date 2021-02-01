@@ -277,7 +277,7 @@ def add_tester(tester_name, tester_email):
     :return: 成功返回1， 失败返回0
     """
     sql = """
-    INSERT INTO "tester" ("name", "email")
+    INSERT INTO "tester" "name", "email"
     VALUES
         ('%s', '%s')
     """ % (tester_name, tester_email)
@@ -368,3 +368,60 @@ def get_bug_count_with_tester():
     else:
         return False
 
+
+def get_bug_type_count_with_tester(tester_id):
+    """
+    获取测试人员跟进BUG类型
+    :return:
+    """
+    sql = """
+    SELECT
+    bug_type.type_name,
+    COUNT(bug_id) as count
+    FROM
+    tester
+    INNER JOIN bug ON bug.tester_id = tester.tester_id
+    INNER JOIN bug_type ON bug.bug_type = bug_type.type_id
+    WHERE
+    tester.tester_id = %i
+    GROUP BY
+    bug.bug_type
+    """ % tester_id
+
+    result = db(sql)
+    if result:
+        logger.debug(result)
+        return result
+    else:
+        return False
+
+
+def get_bug_category_count_with_tester(tester_id):
+    """
+    获取测试人员跟进BUG类型
+    :return:
+    """
+    sql = """
+    SELECT
+    Count(bug.bug_id) AS count,
+    bug_category.category_name
+    FROM
+    tester
+    INNER JOIN bug ON bug.tester_id = tester.tester_id
+    INNER JOIN bug_category ON bug.category = bug_category.category_id
+    WHERE
+    tester.tester_id = %i
+    GROUP BY
+    bug.category
+    """ % tester_id
+
+    result = db(sql)
+    if result:
+        logger.debug(result)
+        return result
+    else:
+        return False
+
+
+# if __name__ == '__main__':
+#     get_bug_type_with_tester(1)

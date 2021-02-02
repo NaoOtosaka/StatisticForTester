@@ -353,12 +353,37 @@ def get_bug_count_with_tester():
     sql = """
     SELECT
     tester.name,
-    Count(bug.bug_id) AS bugNum
+    Count(1) AS bugNum
     FROM
     tester
     INNER JOIN bug ON bug.tester_id = tester.tester_id
     GROUP BY
     tester.tester_id
+    """
+
+    result = db(sql)
+    if result:
+        logger.debug(result)
+        return result
+    else:
+        return False
+
+
+def get_bug_type_count():
+    """
+    跟进BUG类型统计
+    :return:
+    """
+    sql = """
+    SELECT
+    bug_type.type_name,
+    COUNT(1) as count
+    FROM
+    tester
+    INNER JOIN bug ON bug.tester_id = tester.tester_id
+    INNER JOIN bug_type ON bug.bug_type = bug_type.type_id
+    GROUP BY
+    bug.bug_type
     """
 
     result = db(sql)
@@ -377,7 +402,7 @@ def get_bug_type_count_with_tester(tester_id):
     sql = """
     SELECT
     bug_type.type_name,
-    COUNT(bug_id) as count
+    COUNT(1) as count
     FROM
     tester
     INNER JOIN bug ON bug.tester_id = tester.tester_id
@@ -396,14 +421,39 @@ def get_bug_type_count_with_tester(tester_id):
         return False
 
 
-def get_bug_category_count_with_tester(tester_id):
+def get_bug_category_count():
     """
-    获取测试人员跟进BUG类型
+    BUG分类统计
     :return:
     """
     sql = """
     SELECT
-    Count(bug.bug_id) AS count,
+    Count(1) AS count,
+    bug_category.category_name
+    FROM
+    tester
+    INNER JOIN bug ON bug.tester_id = tester.tester_id
+    INNER JOIN bug_category ON bug.category = bug_category.category_id
+    GROUP BY
+    bug.category
+    """
+
+    result = db(sql)
+    if result:
+        logger.debug(result)
+        return result
+    else:
+        return False
+
+
+def get_bug_category_count_with_tester(tester_id):
+    """
+    获取测试人员跟进BUG分类
+    :return:
+    """
+    sql = """
+    SELECT
+    Count(1) AS count,
     bug_category.category_name
     FROM
     tester
@@ -419,6 +469,88 @@ def get_bug_category_count_with_tester(tester_id):
     if result:
         logger.debug(result)
         return result
+    else:
+        return False
+
+
+def get_bug_trend():
+    """
+    BUG趋势统计
+    :return:
+    """
+    sql = """
+    SELECT
+        date,
+        COUNT( COUNT ) 
+    FROM
+        (
+    SELECT
+        date( bug.create_time, 'unixepoch' ) AS date,
+        Count( bug.bug_id ) AS count 
+    FROM
+        tester
+        INNER JOIN bug ON bug.tester_id = tester.tester_id 
+    GROUP BY
+        bug.create_time 
+    ORDER BY
+        bug.create_time ASC 
+        ) 
+    GROUP BY
+        date 
+    ORDER BY
+        date ASC
+    """
+
+    result = db(sql)
+
+    if result:
+        logger.debug(result)
+        temp = {}
+        for item in result:
+            temp[item[0]] = item[1]
+        return temp
+    else:
+        return False
+
+
+def get_bug_trend_with_tester(tester_id):
+    """
+    BUG趋势统计
+    :return:
+    """
+    sql = """
+    SELECT
+        date,
+        COUNT( COUNT ) 
+    FROM
+        (
+    SELECT
+        date( bug.create_time, 'unixepoch' ) AS date,
+        Count( bug.bug_id ) AS count 
+    FROM
+        tester
+        INNER JOIN bug ON bug.tester_id = tester.tester_id 
+    WHERE
+        tester.tester_id = %i
+    GROUP BY
+        bug.create_time 
+    ORDER BY
+        bug.create_time ASC 
+        ) 
+    GROUP BY
+        date 
+    ORDER BY
+        date ASC
+    """ % tester_id
+
+    result = db(sql)
+
+    if result:
+        logger.debug(result)
+        temp = {}
+        for item in result:
+            temp[item[0]] = item[1]
+        return temp
     else:
         return False
 

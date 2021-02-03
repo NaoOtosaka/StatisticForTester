@@ -8,6 +8,7 @@ import pandas
 import tkinter
 from tkinter import filedialog
 from tools.log import *
+from config import CONF
 
 # 实例化日志对象
 logger = setLogger('csvDeal')
@@ -97,8 +98,16 @@ def process_data(csv_object):
                 else:
                     is_finish = False
 
+                # 是否为线上异常
+                if data['项目'] in CONF.BaseData.develop_project:
+                    is_online = False
+                elif data['项目'] in CONF.BaseData.prod_project:
+                    is_online = True
+                else:
+                    is_online = False
+
                 bug_data.append(get_bug_info(tester_id, developer_id, phase_id, bug_type, bug_category, kb_id, title, model,
-                                             create_time, close_time, is_finish, is_close, False))
+                                             create_time, close_time, is_finish, is_close, is_online))
             else:
                 continue
 
@@ -185,8 +194,8 @@ def process_bug_type(bug_type):
     :param bug_type:
     :return:
     """
-    if bug_type in config.CONF.BaseData.bug_type:
-        type_id = config.CONF.BaseData.bug_type[bug_type]
+    if bug_type in CONF.BaseData.bug_type:
+        type_id = CONF.BaseData.bug_type[bug_type]
         return type_id
     else:
         logger.error('字段异常')
@@ -199,9 +208,9 @@ def process_bug_category(bug_category):
     :return:
     """
     if "开发" in bug_category:
-        category = config.CONF.BaseData.bug_category['需求缺失']
+        category = CONF.BaseData.bug_category['需求缺失']
     else:
-        category = config.CONF.BaseData.bug_category['未选定']
+        category = CONF.BaseData.bug_category['未选定']
 
     return category
 
@@ -231,8 +240,8 @@ def process_plan(plan):
     :param plan:
     :return:
     """
-    if plan in config.CONF.BaseData.plan:
-        plan_id = config.CONF.BaseData.plan[plan]
+    if plan in CONF.BaseData.plan:
+        plan_id = CONF.BaseData.plan[plan]
         return plan_id
     else:
         logger.error('系统异常')

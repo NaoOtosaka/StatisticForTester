@@ -280,3 +280,28 @@ def bug_trend():
         res = {'msg': '无相关统计信息', 'status': 2001}
 
     return json.dumps(res, ensure_ascii=False)
+
+
+@tester_api.route('bug_env', methods=['get'])
+def bug_env():
+    """
+    获取BUG环境分类数据
+    :return:
+    """
+    tester_id = request.values.get('testerId')
+
+    if tester_id:
+        result = get_bug_count_by_env_with_tester(int(tester_id))
+    else:
+        result = get_bug_count_by_env()
+
+    if result:
+        res = {
+            'msg': '成功',
+            'data': result,
+            'status': 1
+        }
+    else:
+        res = {'msg': '无相关统计信息', 'status': 2001}
+
+    return json.dumps(res, ensure_ascii=False)

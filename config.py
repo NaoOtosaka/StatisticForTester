@@ -27,7 +27,7 @@ class Config(object):
             "性能测试": 9,
             "单元测试": 10,
             "回归测试": 11,
-            "线上验收": 12,
+            "线上异常": 12,
         }
         bug_type = {
             "前端BUG": 1,
@@ -50,6 +50,14 @@ class Config(object):
             "部署异常": 8,
             "功能异常": 9
         }
+        develop_project = [
+            '游戏学院-开发',
+            'KM-平台开发'
+        ]
+        prod_project = [
+            '游戏学院-缺陷',
+            'KM-缺陷跟踪'
+        ]
 
 
 class DevelopmentConfig(Config):

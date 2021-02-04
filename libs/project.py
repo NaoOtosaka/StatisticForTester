@@ -297,3 +297,31 @@ def get_project_insert_id():
         return result[0][0]
     else:
         return False
+
+
+def get_bug_type_count_with_project(project_id):
+    """
+    获取每个项目对应异常类型统计
+    :return:
+    """
+    sql = """
+    SELECT
+    bug_type.type_name as type,
+    Count(bug.bug_id) as count
+    FROM
+    project ,
+    bug
+    INNER JOIN project_phases ON project_phases.project_id = project.project_id AND bug.phase_id = project_phases.phase_id
+    INNER JOIN bug_type ON bug.bug_type = bug_type.type_id
+    WHERE
+    project.project_id = %i
+    GROUP BY
+    bug_type.type_name
+    """ % project_id
+
+    result = db(sql)
+    if result:
+        logger.debug(result)
+        return result
+    else:
+        return False

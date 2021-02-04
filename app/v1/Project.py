@@ -3,6 +3,7 @@ from flask import request
 import json
 
 from libs.project import *
+from libs.bug import *
 from tools.log import *
 
 # 实例化日志对象
@@ -192,3 +193,28 @@ def delete_project_api():
 
     return json.dumps(res, ensure_ascii=False)
 
+
+@project_api.route('/bug_type', methods=['get'])
+def bug_type():
+    """
+    根据测试人员或许BUG类型
+    传入空时统计全部类型数据
+    :return:
+    """
+    project_id = request.values.get('projectId')
+
+    if project_id:
+        result = get_bug_type_count_with_project(int(project_id))
+    else:
+        result = get_bug_type_count()
+
+    if result:
+        res = {
+            'msg': '成功',
+            'data': result,
+            'status': 1
+        }
+    else:
+        res = {'msg': '无相关统计信息', 'status': 2001}
+
+    return json.dumps(res, ensure_ascii=False)

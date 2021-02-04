@@ -3,6 +3,7 @@ from flask import request
 import json
 
 from libs.tester import *
+from libs.bug import *
 from tools.log import *
 
 # 实例化日志对象

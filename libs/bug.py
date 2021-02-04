@@ -337,3 +337,127 @@ def delete_bug_with_kb_id(kb_id):
     else:
         return 0
 
+
+def get_bug_type_count():
+    """
+    BUG类型统计
+    :return:
+    """
+    sql = """
+    SELECT
+    bug_type.type_name,
+    COUNT(1) as count
+    FROM
+    tester
+    INNER JOIN bug ON bug.tester_id = tester.tester_id
+    INNER JOIN bug_type ON bug.bug_type = bug_type.type_id
+    GROUP BY
+    bug.bug_type
+    """
+
+    result = db(sql)
+    if result:
+        logger.debug(result)
+        return result
+    else:
+        return False
+
+
+def get_bug_category_count():
+    """
+    BUG分类统计
+    :return:
+    """
+    sql = """
+    SELECT
+    Count(1) AS count,
+    bug_category.category_name
+    FROM
+    tester
+    INNER JOIN bug ON bug.tester_id = tester.tester_id
+    INNER JOIN bug_category ON bug.category = bug_category.category_id
+    GROUP BY
+    bug.category
+    """
+
+    result = db(sql)
+    if result:
+        logger.debug(result)
+        return result
+    else:
+        return False
+
+
+def get_bug_trend():
+    """
+    BUG趋势统计
+    :return:
+    """
+    sql = """
+    SELECT
+        date,
+        COUNT( COUNT ) 
+    FROM
+        (
+    SELECT
+        date( bug.create_time, 'unixepoch' ) AS date,
+        Count( bug.bug_id ) AS count 
+    FROM
+        tester
+        INNER JOIN bug ON bug.tester_id = tester.tester_id 
+    GROUP BY
+        bug.create_time 
+    ORDER BY
+        bug.create_time ASC 
+        ) 
+    GROUP BY
+        date 
+    ORDER BY
+        date ASC
+    """
+
+    result = db(sql)
+
+    if result:
+        logger.debug(result)
+        temp = {
+            'startDate': result[0][0],
+            'endDate': result[-1][0],
+            'data': {}
+        }
+        for item in result:
+            temp['data'][item[0]] = item[1]
+        return temp
+    else:
+        return False
+
+
+def get_bug_count_by_env():
+    """
+    获取BUG环境分类
+    :return:
+    """
+    sql = """
+    SELECT
+    bug.is_online AS env,
+    Count(bug.bug_id) AS count
+    FROM
+    tester
+    INNER JOIN bug ON bug.tester_id = tester.tester_id
+    GROUP BY
+    bug.is_online
+    """
+
+    result = db(sql)
+
+    if result:
+        logger.debug(result)
+        temp = []
+        for item in result:
+            if item[0] == 'False':
+                temp.append(('开发异常', item[1]))
+            else:
+                temp.append(('线上异常', item[1]))
+        return temp
+    else:
+        return False

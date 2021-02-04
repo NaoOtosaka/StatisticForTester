@@ -33,13 +33,18 @@ def get_bug_list():
     tester.name,
     developer.name,
     bug.is_closed,
-    bug.is_finished
+    bug.is_finished,
+    bug_category.category_name,
+    bug_type.type_name
     FROM
     bug
     INNER JOIN project_phases ON bug.phase_id = project_phases.phase_id
     INNER JOIN project ON project_phases.project_id = project.project_id
     INNER JOIN tester ON bug.tester_id = tester.tester_id
     INNER JOIN developer ON bug.developer_id = developer.developer_id
+    INNER JOIN bug_category ON bug.category = bug_category.category_id
+    INNER JOIN bug_type ON bug.bug_type = bug_type.type_id
+
 
     """
 
@@ -56,6 +61,8 @@ def get_bug_list():
                     'kbId': result[i][1],
                     'bugTitle': result[i][2],
                     'bugModel': result[i][3],
+                    'bugType': result[i][10],
+                    'bugCategory': result[i][9],
                     'projectName': result[i][4],
                     'testerName': result[i][5],
                     'developerName': result[i][6],

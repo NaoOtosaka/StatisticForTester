@@ -3,25 +3,31 @@ from flask_cors import CORS
 
 from config import CONF
 from app.manager import api_v1
+from gevent import pywsgi
 
 
-def setup(flask_server):
+def setup(flask_server, debug):
     """
     设置启动
+    :param debug:
     :param flask_server:
     :return:
     """
     # 跨域处理
-    CORS(server, supports_credentials=True)
+    CORS(flask_server, supports_credentials=True)
 
     # 注册API蓝图
-    server.register_blueprint(api_v1)
+    flask_server.register_blueprint(api_v1)
 
-    # 启动参数
-    flask_server.run(port=CONF.API_PORT, debug=CONF.DEBUG, host=CONF.API_HOST)
+    if debug:
+        # 启动参数
+        flask_server.run(port=CONF.API_PORT, debug=CONF.DEBUG, host=CONF.API_HOST)
+    else:
+        server = pywsgi.WSGIServer((CONF.API_PORT, CONF.API_HOST), flask_server)
+        server.serve_forever()
 
 
 if __name__ == '__main__':
-    server = Flask(__name__)
+    app = Flask(__name__)
 
-    setup(server)
+    setup(app, CONF.DEBUG)

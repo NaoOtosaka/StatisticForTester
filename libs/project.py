@@ -326,3 +326,59 @@ def get_bug_type_count_with_project(project_id):
         return result
     else:
         return False
+
+
+def get_bug_category_count_with_project(project_id):
+    """
+    获取测试人员跟进BUG分类
+    :return:
+    """
+    sql = """
+    SELECT
+    Count(bug.bug_id) as count,
+    bug_category.category_name as category
+    FROM
+    bug_category
+    INNER JOIN bug ON bug.category = bug_category.category_id ,
+    project
+    INNER JOIN project_phases ON project_phases.project_id = project.project_id AND bug.phase_id = project_phases.phase_id
+    WHERE
+    project.project_id = %i
+    GROUP BY
+    bug_category.category_name
+    """ % project_id
+
+    result = db(sql)
+    if result:
+        logger.debug(result)
+        return result
+    else:
+        return False
+
+
+def get_bug_developer_count_with_project(project_id):
+    """
+    根据项目获取开发人员跟进BUG占比
+    :return: 
+    """
+    sql = """
+    SELECT
+    Count(bug.bug_id) AS count,
+    developer.name AS developer
+    FROM
+    developer
+    INNER JOIN bug ON bug.developer_id = developer.developer_id
+    INNER JOIN project_phases ON bug.phase_id = project_phases.phase_id
+    INNER JOIN project ON project_phases.project_id = project.project_id
+    WHERE
+    project.project_id = %i
+    GROUP BY
+    developer.name
+    """ % project_id
+
+    result = db(sql)
+    if result:
+        logger.debug(result)
+        return result
+    else:
+        return False

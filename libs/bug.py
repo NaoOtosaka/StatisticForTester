@@ -461,3 +461,28 @@ def get_bug_count_by_env():
         return temp
     else:
         return False
+
+
+def get_bug_developer_count():
+    """
+    根据项目获取开发人员跟进BUG占比
+    :return:
+    """
+    sql = """
+    SELECT
+    Count(bug.bug_id) AS count,
+    developer.name AS developer
+    FROM
+    developer
+    INNER JOIN bug ON bug.developer_id = developer.developer_id
+    INNER JOIN project_phases ON bug.phase_id = project_phases.phase_id
+    GROUP BY
+    developer.name
+    """
+
+    result = db(sql)
+    if result:
+        logger.debug(result)
+        return result
+    else:
+        return False

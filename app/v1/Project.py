@@ -218,3 +218,55 @@ def bug_type():
         res = {'msg': '无相关统计信息', 'status': 2001}
 
     return json.dumps(res, ensure_ascii=False)
+
+
+@project_api.route('/bug_category', methods=['get'])
+def bug_category():
+    """
+    根据测试人员或许BUG类型
+    传入空时统计全部类型数据
+    :return:
+    """
+    project_id = request.values.get('projectId')
+
+    if project_id:
+        result = get_bug_category_count_with_project(int(project_id))
+    else:
+        result = get_bug_category_count()
+
+    if result:
+        res = {
+            'msg': '成功',
+            'data': result,
+            'status': 1
+        }
+    else:
+        res = {'msg': '无相关统计信息', 'status': 2001}
+
+    return json.dumps(res, ensure_ascii=False)
+
+
+@project_api.route('/developer_count', methods=['get'])
+def developer_count():
+    """
+    根据测试人员或许BUG类型
+    传入空时统计全部类型数据
+    :return:
+    """
+    project_id = request.values.get('projectId')
+
+    if project_id:
+        result = get_bug_developer_count_with_project(int(project_id))
+    else:
+        result = get_bug_developer_count()
+
+    if result:
+        res = {
+            'msg': '成功',
+            'data': result,
+            'status': 1
+        }
+    else:
+        res = {'msg': '无相关统计信息', 'status': 2001}
+
+    return json.dumps(res, ensure_ascii=False)

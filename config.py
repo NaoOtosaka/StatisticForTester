@@ -86,7 +86,7 @@ class ProjectionConfig(Config):
     DEBUG = False
 
     # 工作区配置
-    workPath = '/Users/pijingwen/PycharmProjects/statistic'
+    workPath = '/Users/pijingwen/PycharmProjects/qa-dbstatistics'
 
     # 日志输出等级
     LOG_LEVEL = 'WARNING'

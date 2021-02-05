@@ -311,7 +311,8 @@ def get_bug_type_count_with_project(project_id):
     FROM
     project ,
     bug
-    INNER JOIN project_phases ON project_phases.project_id = project.project_id AND bug.phase_id = project_phases.phase_id
+    INNER JOIN project_phases ON project_phases.project_id = project.project_id 
+    AND bug.phase_id = project_phases.phase_id
     INNER JOIN bug_type ON bug.bug_type = bug_type.type_id
     WHERE
     project.project_id = %i

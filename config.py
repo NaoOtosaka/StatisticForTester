@@ -11,6 +11,9 @@ class Config(object):
     # 是否启动外键约束
     USE_FOREIGN = True
 
+    # 数据库缓存分页大小
+    CACHE_SIZE = 8000
+
     # API版本
     API_VERSION = 'v1'
 

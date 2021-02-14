@@ -307,7 +307,7 @@ def get_bug_type_count_with_project(project_id):
     sql = """
     SELECT
     bug_type.type_name as type,
-    Count(bug.bug_id) as count
+    Count(1) as count
     FROM
     project ,
     bug

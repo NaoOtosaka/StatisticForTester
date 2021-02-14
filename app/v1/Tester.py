@@ -6,6 +6,7 @@ from libs.tester import *
 from libs.bug import *
 from tools.log import *
 
+
 # 实例化日志对象
 logger = setLogger('tester_api')
 

@@ -337,7 +337,6 @@ def delete_bug_with_kb_id(kb_id):
     else:
         return 0
 
-
 def get_bug_type_count():
     """
     BUG类型统计

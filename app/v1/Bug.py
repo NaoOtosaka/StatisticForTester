@@ -213,5 +213,3 @@ def delete_bug_api():
         res = {'msg': '该缺陷不存在', 'status': 2001}
 
     return json.dumps(res, ensure_ascii=False)
-
-

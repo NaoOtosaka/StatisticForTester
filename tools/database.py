@@ -38,6 +38,10 @@ def connect_database():
     if CONF.USE_FOREIGN:
         connect.execute("PRAGMA foreign_keys=1;")
 
+    if CONF.CACHE_SIZE:
+        sql = "PRAGMA cache_size=" + str(CONF.CACHE_SIZE) + ";"
+        connect.execute(sql)
+
     return connect
 
 
@@ -160,10 +164,10 @@ def delete(connect, sql):
     return result
 
 
-if __name__ == '__main__':
-    pass
-    # sql = """
-    # UPDATE bug SET tester_id=1, developer_id=1, phase_id=1, bug_type=1, category=8, title='作品展示页翻页后点击进入作品详情页后，点击退回上个页面保持页面筛选状态，即维持在进入此作品详情页的作品类表页数',
-    # model='前端-作品展示区', create_time=1611147000, close_time=0, is_finished='False', is_closed='False', is_online='False' WHERE kb_id=71892;
-    # """
-    # db(sql)
+# if __name__ == '__main__':
+#     # pass
+#     sql = """
+#     UPDATE bug SET tester_id=1, developer_id=1, phase_id=1, bug_type=1, category=8, title='作品展示页翻页后点击进入作品详情页后，点击退回上个页面保持页面筛选状态，即维持在进入此作品详情页的作品类表页数',
+#     model='前端-作品展示区', create_time=1611147000, close_time=0, is_finished='False', is_closed='False', is_online='False' WHERE kb_id=71892;
+#     """
+#     db(sql)

@@ -45,7 +45,9 @@ def show_bug_list():
         'status': 1
         }
     """
-    result = get_bug_list()
+    phase_id = request.values.get('phaseId')
+
+    result = get_bug_list(phase_id=phase_id)
 
     if result:
         res = {

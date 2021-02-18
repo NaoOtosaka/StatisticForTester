@@ -5,7 +5,7 @@ from tools.log import *
 logger = setLogger('bug')
 
 
-def get_bug_list():
+def get_bug_list(phase_id=None):
     """
     获取BUG列表
     :return: bug_list
@@ -44,9 +44,10 @@ def get_bug_list():
     INNER JOIN developer ON bug.developer_id = developer.developer_id
     INNER JOIN bug_category ON bug.category = bug_category.category_id
     INNER JOIN bug_type ON bug.bug_type = bug_type.type_id
-
-
     """
+
+    if phase_id:
+        sql += "WHERE bug.phase_id = %i" % int(phase_id)
 
     temp = []
 

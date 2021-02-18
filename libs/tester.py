@@ -277,7 +277,7 @@ def add_tester(tester_name, tester_email):
     :return: 成功返回1， 失败返回0
     """
     sql = """
-    INSERT INTO "tester" "name", "email"
+    INSERT INTO "tester"("name", "email")
     VALUES
         ('%s', '%s')
     """ % (tester_name, tester_email)

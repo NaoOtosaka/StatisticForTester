@@ -100,6 +100,7 @@ def show_project_list():
         'status': 1
         }
     """
+
     result = get_project_list()
 
     if result:

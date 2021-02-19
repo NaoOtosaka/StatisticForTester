@@ -57,10 +57,9 @@ def get_project_base_info(project_id):
         SELECT
         project.project_id,
         project.project_name,
-        planner.name
+        project.planner_id
         FROM
         project
-        INNER JOIN planner ON project.planner_id = planner.planner_id
         WHERE
         project.project_id = "%i";
     """ % project_id
@@ -184,7 +183,9 @@ def get_phase_info_with_project(project_id):
         INNER JOIN project_phases ON project_phases.project_id = project.project_id
         INNER JOIN test_plan ON project_phases.plan_id = test_plan.plan_id
         WHERE
-        project.project_id = "%i";
+        project.project_id = "%i"
+        ORDER BY
+        test_plan.plan_id ASC
     """ % project_id
 
     temp = []

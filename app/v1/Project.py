@@ -18,7 +18,7 @@ def project_list():
     return show_project_list()
 
 
-@project_api.route('/', methods=['GET', 'POST', 'PUT', 'DELETE'])
+@project_api.route('/', methods=['GET', 'POST', 'PUT', 'DELETE'], strict_slashes=False)
 def project():
     if request.method == 'GET':
         # 获取项目基础信息
@@ -148,9 +148,9 @@ def edit_project_api():
     :return:
     """
     # 接收入参
-    project_id = int(request.json.get('projectId'))
-    planner_id = int(request.json.get('plannerId'))
-    project_name = request.json.get('projectName')
+    project_id = int(request.values.get('projectId'))
+    planner_id = int(request.values.get('plannerId'))
+    project_name = request.values.get('projectName')
 
     if project_id and planner_id and project_name:
         sql = "SELECT * FROM project WHERE project_id = '%i';" % project_id

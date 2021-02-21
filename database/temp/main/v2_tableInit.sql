@@ -7,6 +7,15 @@ CREATE TABLE "bug_category" (
 );
 
 
+-- 项目分类表
+DROP TABLE IF EXISTS "project_category";
+CREATE TABLE "project_category" (
+	"category_id" INTEGER NOT NULL,
+  "category_name" NVARCHAR(16) NOT NULL,
+	PRIMARY KEY ("category_id")
+);
+
+
 -- BUG跟踪标签
 DROP TABLE IF EXISTS "bug_type";
 CREATE TABLE "bug_type" (
@@ -72,8 +81,10 @@ CREATE TABLE "project" (
   "project_id" INTEGER NOT NULL,
   "planner_id" INTEGER NOT NULL,
   "project_name" NVARCHAR(255) NOT NULL,
+	"category" INTEGER,
   PRIMARY KEY ("project_id"),
   CONSTRAINT "plannerId" FOREIGN KEY ("planner_id") REFERENCES "planner" ("planner_id") ON DELETE CASCADE ON UPDATE CASCADE
+	CONSTRAINT "projectCategory" FOREIGN KEY ("category") REFERENCES "project_category" ("category_id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 

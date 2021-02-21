@@ -12,16 +12,19 @@ def get_project_list():
         'projectId': int,
         'projectName': string,
         'planner': string,
+        'category': string
     }
     """
     sql = """
         SELECT
         project.project_id,
         project.project_name,
-        planner.name
+        planner.name,
+        project_category.category_name as category
         FROM
         project
         INNER JOIN planner ON project.planner_id = planner.planner_id
+        INNER JOIN project_category ON project.category = project_category.category_id
         """
     temp = []
 
@@ -34,7 +37,8 @@ def get_project_list():
                 {
                     'projectId': result[i][0],
                     'projectName': result[i][1],
-                    'planner': result[i][2]
+                    'planner': result[i][2],
+                    'category': result[i][3]
                 }
             )
         return temp
@@ -177,13 +181,20 @@ def get_phase_info_with_project(project_id):
         project_phases.phase_id,
         test_plan.plan_name,
         project_phases.start_time,
-        project_phases.end_time
+        project_phases.end_time,
+        Count(bug.bug_id) as count
         FROM
         project
         INNER JOIN project_phases ON project_phases.project_id = project.project_id
         INNER JOIN test_plan ON project_phases.plan_id = test_plan.plan_id
+        INNER JOIN bug ON bug.phase_id = project_phases.phase_id
         WHERE
         project.project_id = "%i"
+        GROUP BY
+        project_phases.phase_id,
+        test_plan.plan_name,
+        project_phases.start_time,
+        project_phases.end_time
         ORDER BY
         test_plan.plan_id ASC
     """ % project_id
@@ -200,7 +211,8 @@ def get_phase_info_with_project(project_id):
                     'phaseId': result[i][0],
                     'name': result[i][1],
                     'startTime': result[i][2],
-                    'endTime': result[i][3]
+                    'endTime': result[i][3],
+                    'count': result[i][4]
                 }
             )
         return temp

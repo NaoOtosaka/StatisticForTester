@@ -5,7 +5,7 @@ from tools.log import *
 logger = setLogger('project')
 
 
-def get_project_list():
+def get_project_list(category_id=None):
     """
     返回项目列表信息
     :return: {
@@ -26,6 +26,10 @@ def get_project_list():
         INNER JOIN planner ON project.planner_id = planner.planner_id
         INNER JOIN project_category ON project.category = project_category.category_id
         """
+
+    if category_id:
+        sql += "WHERE project.category = %i" % int(category_id)
+
     temp = []
 
     result = db(sql)

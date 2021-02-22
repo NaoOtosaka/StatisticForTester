@@ -100,8 +100,9 @@ def show_project_list():
         'status': 1
         }
     """
+    category_id = request.values.get('categoryId')
 
-    result = get_project_list()
+    result = get_project_list(category_id=category_id)
 
     if result:
         res = {

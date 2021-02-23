@@ -5,14 +5,30 @@ class Config(object):
     # 工作区初始化
     workPath = sys.path[1]
 
-    # 数据库路径配置
-    DB_HOST = workPath + '/database/data.db'
+    # 数据库选择(mysql/sqlite)
+    DB_TYPE = 'mysql'
+
+    # =============SQLITE===============
+    # SQLITE数据库路径配置
+    DB_PATH = workPath + '/database/data.db'
 
     # 是否启动外键约束
     USE_FOREIGN = True
 
     # 数据库缓存分页大小
     CACHE_SIZE = 8000
+
+    # =============MYSQL===============
+    # MYSQL主机名配置
+    BD_HOST = ''
+    # MYSQL主机端口配置
+    DB_PORT = 3306
+    # MYSQL用户名
+    DB_USER = ''
+    # MYSQL密码
+    DB_PASSWORD = ''
+    # MYSQL数据库名
+    DB_NAME = ''
 
     # API版本
     API_VERSION = 'v1'
@@ -73,6 +89,19 @@ class DevelopmentConfig(Config):
     # 日志输出等级
     LOG_LEVEL = 'DEBUG'
 
+    DB_TYPE = 'mysql'
+
+    # =============MYSQL===============
+    BD_HOST = '121.36.8.249'
+    # MYSQL主机端口配置
+    DB_PORT = 3306
+    # MYSQL用户名
+    DB_USER = 'root'
+    # MYSQL密码
+    DB_PASSWORD = 'yujian9703'
+    # MYSQL数据库名
+    DB_NAME = 'DataStatistic'
+
     # 主机配置
     API_HOST = '0.0.0.0'
     API_PORT = 9222
@@ -99,6 +128,16 @@ class ProjectionConfig(Config):
 
     # 数据库路径配置
     DB_HOST = workPath + '/database/data.db'
+
+    # =============MYSQL===============
+    # MYSQL主机名配置
+    BD_HOST = ''
+    # MYSQL用户名
+    DB_USER = ''
+    # MYSQL密码
+    DB_PASSWORD = ''
+    # MYSQL数据库名
+    DB_NAME = ''
 
     # 主机配置
     API_HOST = '0.0.0.0'

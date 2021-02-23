@@ -286,7 +286,7 @@ def add_project(planner_id, project_name):
     :return:
     """
     sql = """
-    INSERT INTO "project"("planner_id", "project_name") 
+    INSERT INTO project(planner_id, project_name) 
     VALUES ('%i', '%s')
     """ % (planner_id, project_name)
     status = db(sql)

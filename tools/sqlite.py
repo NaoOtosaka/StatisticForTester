@@ -1,4 +1,4 @@
-import pymysql
+import sqlite3
 
 from config import CONF
 from tools.log import *
@@ -29,14 +29,18 @@ def db(sql=None):
 def connect_database():
     """
     挂载数据库
-    :return: mysql.Connection
+    :return: sqlite3.Connection
     """
-    connect = pymysql.connect(
-        host=CONF.BD_HOST,
-        port=CONF.DB_PORT,
-        user=CONF.DB_USER,
-        passwd=CONF.DB_PASSWORD,
-        db=CONF.DB_NAME)
+    # 挂载链接
+    connect = sqlite3.connect(CONF.DB_PATH)
+
+    # 强制启动外键约束
+    if CONF.USE_FOREIGN:
+        connect.execute("PRAGMA foreign_keys=1;")
+
+    if CONF.CACHE_SIZE:
+        sql = "PRAGMA cache_size=" + str(CONF.CACHE_SIZE) + ";"
+        connect.execute(sql)
 
     return connect
 
@@ -48,23 +52,23 @@ def do_query(connect, sql):
     :type sql: string
     """
     sql = sql.strip()
-    # 创建游标
-    cursor = connect.cursor()
 
     if sql.lstrip().upper().startswith("SELECT"):
+        # 创建游标
+        cursor = connect.cursor()
         # 查询
         result = select(cursor, sql)
         # 关闭游标
         cursor.close()
         return result
     elif sql.lstrip().upper().startswith("INSERT"):
-        result = insert(cursor, sql)
+        result = insert(connect, sql)
         return result
     elif sql.lstrip().upper().startswith("UPDATE"):
-        result = update(cursor, sql)
+        result = update(connect, sql)
         return result
     elif sql.lstrip().upper().startswith("DELETE"):
-        result = delete(cursor, sql)
+        result = delete(connect, sql)
         return result
     else:
         return 0
@@ -158,6 +162,7 @@ def delete(connect, sql):
         print(sqlite3.Error)
 
     return result
+
 
 # if __name__ == '__main__':
 #     # pass

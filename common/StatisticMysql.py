@@ -165,4 +165,5 @@ class StatisticMysql:
         return result
 
 
+# 单例模式
 StatisticMysqlPool = StatisticMysql()

@@ -6,10 +6,10 @@ from libs.phase import *
 from libs.bug import *
 import pandas
 import tkinter
+import threading
 from tkinter import filedialog
 from tools.log import *
 from config import CONF
-from common.StatisticMysql import StatisticMysql
 
 # 实例化日志对象
 logger = setLogger('csvDeal')
@@ -44,90 +44,108 @@ def open_csv(file_name):
         return False
 
 
-def process_data(csv_object):
+def process_file(csv_object):
     """
-    基础数据提取
+    csv内容处理
+    :param csv_object:
     :return:
     """
+    # 初始化线程组
+    threads = []
+
     bug_data = []
     # 数据遍历
     for index, data in csv_object.iterrows():
-
-        if 'BUG' in data['跟踪标签'] or '开发' in data['跟踪标签']:
-            # 看板id
-            kb_id = index
-
-            # 标题源数据处理
-            title_info = process_title(data['主题'], kb_id)
-
-            if title_info:
-                # BUG标题
-                title = title_info[-1]
-
-                # BUG模块
-                model = process_model(title_info)
-
-                # 项目阶段处理
-                phase_id = get_phase_info(title_info[0], title_info[2])
-
-                # 测试人员
-                tester_id = process_tester(reserve_chinese(data['跟进QA']))
-
-                # 开发人员
-                developer_id = process_developer(reserve_chinese(data['指派给']))
-
-                # BUG标签
-                bug_type = process_bug_type(data['跟踪标签'])
-
-                # BUG类型
-                bug_category = process_bug_category(data['跟踪标签'])
-
-                # 创建时间
-                create_time = process_time(data['创建于'])
-
-                # 关闭时间
-                if pandas.isnull(data['关闭日期']) or pandas.isnull(data['完成日期']):
-                    is_close = False
-                    close_time = 0
-                else:
-                    is_close = True
-                    close_time = process_close_time(data['完成日期'])
-
-                # 完成判定
-                if data['% 完成'] == 100:
-                    is_finish = True
-                else:
-                    is_finish = False
-
-                # 是否为线上异常
-                if data['项目'] in CONF.BaseData.develop_project:
-                    is_online = False
-                elif data['项目'] in CONF.BaseData.prod_project:
-                    is_online = True
-                else:
-                    is_online = False
-
-                bug_data.append(get_bug_info(tester_id, developer_id, phase_id, bug_type, bug_category, kb_id, title, model,
-                                             create_time, close_time, is_finish, is_close, is_online))
-            else:
-                continue
-
-        else:
-            continue
+        process_data(index, data, bug_data)
+    #
+    #     t = threading.Thread(target=process_data, args=(index, data, bug_data,))
+    #     threads.append(t)
+    #     # 启动线程
+    # for insert in threads:
+    #     insert.start()
+    #
+    #     # 守护线程
+    # for insert in threads:
+    #     insert.join()
 
     return bug_data
 
 
-def get_phase_info(project, plan):
+def process_data(index, data, bug_data):
+    """
+    基础数据提取(线程封装)
+    :return:
+    """
+    if 'BUG' in data['跟踪标签'] or '开发' in data['跟踪标签']:
+        # 看板id
+        kb_id = index
+
+        # 标题源数据处理
+        title_info = process_title(data['主题'], kb_id)
+
+        if title_info:
+            # BUG标题
+            title = title_info[-1]
+
+            # BUG模块
+            model = process_model(title_info)
+
+            # 项目阶段处理
+            phase_id = get_phase_info(title_info[0], title_info[2], data['项目'])
+
+            # 测试人员
+            tester_id = process_tester(reserve_chinese(data['跟进QA']))
+
+            # 开发人员
+            developer_id = process_developer(reserve_chinese(data['指派给']))
+
+            # BUG标签
+            bug_type = process_bug_type(data['跟踪标签'])
+
+            # BUG类型
+            bug_category = process_bug_category(data['跟踪标签'])
+
+            # 创建时间
+            create_time = process_time(data['创建于'])
+
+            # 关闭时间
+            if pandas.isnull(data['关闭日期']) or pandas.isnull(data['完成日期']):
+                is_close = False
+                close_time = 0
+            else:
+                is_close = True
+                close_time = process_close_time(data['完成日期'])
+
+            # 完成判定
+            if data['% 完成'] == 100:
+                is_finish = True
+            else:
+                is_finish = False
+
+            # 是否为线上异常
+            print(data['项目'])
+            if data['项目'] in CONF.BaseData.develop_project:
+                is_online = False
+            elif data['项目'] in CONF.BaseData.prod_project:
+                is_online = True
+            else:
+                is_online = False
+
+            bug_data.append(get_bug_info(tester_id, developer_id, phase_id, bug_type, bug_category, kb_id, title, model,
+                                         create_time, close_time, is_finish, is_close, is_online))
+
+
+def get_phase_info(project, plan, category):
     """
     根据项目名与计划获取对应项目阶段id
+    :param category:
     :param project:
     :param plan:
     :return:
     """
     logger.debug(plan)
 
-    project_id = int(process_project(project))
+    project_id = int(process_project(project, category))
     plan_id = int(process_plan(plan))
 
     temp = get_plan_with_project_and_plan(project_id, plan_id)
@@ -216,9 +234,25 @@ def process_bug_category(bug_category):
     return category
 
 
-def process_project(project):
+def process_project_category(category):
+    """
+    处理项目分类
+    :return:
+    """
+    if "KM" in category:
+        category_id = 2
+    elif "游戏学院" in category:
+        category_id = 3
+    else:
+        category_id = 1
+
+    return category_id
+
+
+def process_project(project, category):
     """
     项目名称操作
+    :param category:
     :param project:
     :return:
     """
@@ -227,10 +261,13 @@ def process_project(project):
 
     logger.debug(project)
 
+    category_id = process_project_category(category)
+
     project_id = check_project_with_name(project)
+    print(project_id)
     # 项目不存在则创建
     if not project_id:
-        add_project(planner, project)
+        add_project(planner, project, category_id)
         project_id = get_project_insert_id()
     return project_id
 
@@ -376,12 +413,23 @@ def local_main():
     本地运行主逻辑
     :return:
     """
+    # 初始化线程组
+    threads = []
+
     file_name = choose_file()
     if file_name:
         csv_object = open_csv(file_name)
-        bug_data = process_data(csv_object)
+        bug_data = process_file(csv_object)
         for data in bug_data:
-            insert_bug_info(data)
+            t = threading.Thread(target=insert_bug_info, args=(data,))
+            threads.append(t)
+    # 启动线程
+    for insert in threads:
+        insert.start()
+
+    # 守护线程
+    for insert in threads:
+        insert.join()
 
 
 def api_main(file_name):
@@ -391,7 +439,7 @@ def api_main(file_name):
     :return:
     """
     csv_object = open_csv(file_name)
-    bug_data = process_data(csv_object)
+    bug_data = process_file(csv_object)
     for data in bug_data:
         insert_bug_info(data)
 

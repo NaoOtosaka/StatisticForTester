@@ -346,8 +346,8 @@ def get_bug_type_count():
     """
     sql = """
     SELECT
-    bug_type.type_name,
-    COUNT(1) as count
+    COUNT(1) as count,
+    bug_type.type_name
     FROM
     tester
     INNER JOIN bug ON bug.tester_id = tester.tester_id
@@ -401,7 +401,7 @@ def get_bug_trend():
     FROM
         (
     SELECT
-        date( bug.create_time, 'unixepoch' ) AS date,
+        FROM_UNIXTIME( bug.create_time, '%Y-%m-%d' ) AS date,
         Count( bug.bug_id ) AS count 
     FROM
         tester
@@ -410,7 +410,7 @@ def get_bug_trend():
         bug.create_time 
     ORDER BY
         bug.create_time ASC 
-        ) 
+        ) AS data
     GROUP BY
         date 
     ORDER BY
@@ -455,10 +455,10 @@ def get_bug_count_by_env():
         logger.debug(result)
         temp = []
         for item in result:
-            if item[0] == 'False':
-                temp.append(('开发异常', item[1]))
-            else:
+            if item[0]:
                 temp.append(('线上异常', item[1]))
+            else:
+                temp.append(('开发异常', item[1]))
         return temp
     else:
         return False

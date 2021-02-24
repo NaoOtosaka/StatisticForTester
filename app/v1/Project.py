@@ -5,6 +5,7 @@ import json
 from libs.project import *
 from libs.bug import *
 from tools.log import *
+from common.DateEncoder import DateEncoder
 
 # 实例化日志对象
 logger = setLogger('project_api')
@@ -84,7 +85,7 @@ def show_project_info():
     else:
         res = {'msg': '参数错误', 'status': 4001}
 
-    return json.dumps(res, ensure_ascii=False)
+    return json.dumps(res, cls=DateEncoder, ensure_ascii=False)
 
 
 def show_project_list():

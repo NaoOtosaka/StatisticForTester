@@ -92,13 +92,13 @@ class DevelopmentConfig(Config):
     DB_TYPE = 'mysql'
 
     # =============MYSQL===============
-    BD_HOST = '121.36.8.249'
+    BD_HOST = ''
     # MYSQL主机端口配置
     DB_PORT = 3306
     # MYSQL用户名
     DB_USER = 'root'
     # MYSQL密码
-    DB_PASSWORD = 'yujian9703'
+    DB_PASSWORD = ''
     # MYSQL数据库名
     DB_NAME = 'DataStatistic'
 

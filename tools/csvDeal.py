@@ -9,6 +9,7 @@ import tkinter
 from tkinter import filedialog
 from tools.log import *
 from config import CONF
+from common.StatisticMysql import StatisticMysql
 
 # 实例化日志对象
 logger = setLogger('csvDeal')

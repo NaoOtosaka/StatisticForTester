@@ -140,7 +140,7 @@ def add_phase(project_id, plan_id):
     :return:
     """
     sql = """
-    INSERT INTO "project_phases" ("project_id", "plan_id")
+    INSERT INTO project_phases (project_id, plan_id)
     VALUES
     ('%i', '%i')
     """ % (project_id, plan_id)

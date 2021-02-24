@@ -274,12 +274,12 @@ def check_developer_with_email(developer_email):
 def add_developer(developer_name, developer_email, develop_type=None):
     if develop_type:
         sql = """
-        INSERT INTO "developer" ("type_id", "name", "email")
+        INSERT INTO developer (type_id, name, email)
         VALUES ('%i', '%s', '%s');
         """ % (develop_type, developer_name, developer_email)
     else:
         sql = """
-        INSERT INTO "developer" ("name", "email") 
+        INSERT INTO developer (name, email) 
         VALUES ('%s', '%s');
         """ % (developer_name, developer_email)
     status = db(sql)

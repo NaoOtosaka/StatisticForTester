@@ -1,4 +1,5 @@
-from common.StatisticMysql import StatisticMysql
+from config import CONF
+from common.StatisticMysql import StatisticMysqlPool
 
 
 def db(sql=None):
@@ -7,13 +8,10 @@ def db(sql=None):
     :param sql:
     :return:
     """
-    # 挂载链接
-    connect = StatisticMysql()
     # 传入查询时
     if sql:
+        # # 挂载链接
+        # connect = StatisticMysqlPool.connect()
         # 执行SQL
-        result = connect.query(sql)
-        connect.close_db()
+        result = StatisticMysqlPool.query(sql)
         return result
-    # 关闭链接
-    connect.close_db()

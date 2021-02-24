@@ -256,10 +256,10 @@ def add_bug(tester_id, developer_id, phase_id, bug_type, category, kb_id, title,
     :return:
     """
     sql = """
-    INSERT INTO "bug" ("tester_id", "developer_id", "phase_id", "bug_type", "category", "kb_id", "title", "model", 
-    "create_time", "close_time", "is_finished", "is_closed", "is_online")
+    INSERT INTO bug (tester_id, developer_id, phase_id, bug_type, category, kb_id, title, model, 
+    create_time, close_time, is_finished, is_closed, is_online)
     VALUES
-    (%i, %i, %i, %i, %i, %i, '%s', '%s', '%i', %r, '%s', '%s', '%s')
+    (%i, %i, %i, %i, %i, %i, '%s', '%s', %r, %r, %s, %s, %s)
     """ % (tester_id, developer_id, phase_id, bug_type, category, kb_id, title, model, create_time, close_time,
            is_finished, is_closed, is_online)
     logger.debug(sql)
@@ -337,6 +337,7 @@ def delete_bug_with_kb_id(kb_id):
         return 1
     else:
         return 0
+
 
 def get_bug_type_count():
     """

@@ -20,7 +20,10 @@ def get_project_list(category_id=None):
         project.project_id,
         project.project_name,
         planner.name,
-        project_category.category_name as category
+        project_category.category_name as category,
+        project.doc_url,
+        project.test_time,
+        project.publish_time
         FROM
         project
         INNER JOIN planner ON project.planner_id = planner.planner_id
@@ -37,12 +40,18 @@ def get_project_list(category_id=None):
         logger.debug(result)
 
         for i in range(len(result)):
+            tester = get_tester_with_project(result[i][0])
+
             temp.append(
                 {
                     'projectId': result[i][0],
                     'projectName': result[i][1],
                     'planner': result[i][2],
-                    'category': result[i][3]
+                    'category': result[i][3],
+                    'doc_url': result[i][4],
+                    'test_time': result[i][5],
+                    'publish_time': result[i][6],
+                    'tester': tester
                 }
             )
         return temp
@@ -65,7 +74,10 @@ def get_project_base_info(project_id):
         SELECT
         project.project_id,
         project.project_name,
-        project.planner_id
+        project.planner_id,
+        project.doc_url,
+        project.test_time,
+        project.publish_time
         FROM
         project
         WHERE
@@ -79,7 +91,7 @@ def get_project_base_info(project_id):
         temp = {
                 'projectId': result[0][0],
                 'projectName': result[0][1],
-                'planner': result[0][2],
+                'planner': result[0][2]
             }
         return temp
     else:

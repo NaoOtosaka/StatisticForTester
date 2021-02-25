@@ -75,7 +75,10 @@ def get_developer_list():
         logger.debug(result)
 
         for i in range(len(result)):
-            type_name = get_develop_type_with_type_id(result[i][1])
+            if result[i][1]:
+                type_name = get_develop_type_with_type_id(result[i][1])
+            else:
+                type_name = '未指定'
             temp.append(
                 {
                     'developerId': result[i][0],

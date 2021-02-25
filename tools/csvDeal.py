@@ -123,7 +123,7 @@ def process_data(index, data, bug_data):
                 is_finish = False
 
             # 是否为线上异常
-            print(data['项目'])
+            # print(data['项目'])
             if data['项目'] in CONF.BaseData.develop_project:
                 is_online = False
             elif data['项目'] in CONF.BaseData.prod_project:
@@ -264,7 +264,7 @@ def process_project(project, category):
     category_id = process_project_category(category)
 
     project_id = check_project_with_name(project)
-    print(project_id)
+    # print(project_id)
     # 项目不存在则创建
     if not project_id:
         add_project(planner, project, category_id)

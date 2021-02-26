@@ -19,14 +19,13 @@ def get_project_list(category_id=None):
         SELECT
         project.project_id,
         project.project_name,
-        planner.name,
+        project.planner_id,
         project_category.category_name as category,
         project.doc_url,
         project.test_time,
         project.publish_time
         FROM
         project
-        INNER JOIN planner ON project.planner_id = planner.planner_id
         INNER JOIN project_category ON project.category = project_category.category_id
         """
 
@@ -42,16 +41,20 @@ def get_project_list(category_id=None):
         for i in range(len(result)):
             tester = get_tester_with_project(result[i][0])
 
+            tester_list = []
+            for item in tester:
+                tester_list.append(item['testerId'])
+
             temp.append(
                 {
                     'projectId': result[i][0],
                     'projectName': result[i][1],
                     'planner': result[i][2],
                     'category': result[i][3],
-                    'doc_url': result[i][4],
-                    'test_time': result[i][5],
-                    'publish_time': result[i][6],
-                    'tester': tester
+                    'docUrl': result[i][4],
+                    'testTime': result[i][5],
+                    'publishTime': result[i][6],
+                    'tester': tester_list
                 }
             )
         return temp
@@ -290,6 +293,30 @@ def check_project_with_name(project_name):
         return 0
 
 
+def check_project_with_id(project_id):
+    """
+    根据BUG ID检查数据是否存在, 若存在则返回id
+    :param project_id:
+    :return:
+    """
+    sql = """
+    SELECT 
+    project_id
+    FROM
+    project
+    WHERE
+    project_id = %i
+    LIMIT 1
+    """ % project_id
+
+    result = db(sql)
+    if result:
+        logger.debug(result)
+        return result[0][0]
+    else:
+        return 0
+
+
 def add_project(planner_id, project_name, category=None):
     """
     新建项目
@@ -308,6 +335,43 @@ def add_project(planner_id, project_name, category=None):
         INSERT INTO project(planner_id, project_name) 
         VALUES ('%i', '%s')
         """ % (planner_id, project_name)
+    status = db(sql)
+    if status:
+        return 1
+    else:
+        return 0
+
+
+def edit_project(project_id, planner_id, project_name, doc_url, test_time, publish_time):
+    """
+    编辑项目信息
+    :param project_id:
+    :param planner_id:
+    :param project_name:
+    :param doc_url:
+    :param test_time:
+    :param publish_time:
+    :return:
+    """
+    sql = """
+    UPDATE project 
+    SET"""
+
+    if test_time:
+        sql += "test_time=%r," % test_time
+    if publish_time:
+        sql += "publish_time=%r," % publish_time
+
+    sql += """
+    planner_id=%i, 
+    project_name='%s',
+    doc_url='%s'
+    WHERE 
+    project_id=%i;
+    """ % (planner_id, project_name, doc_url, project_id)
+
+    print(sql)
+
     status = db(sql)
     if status:
         return 1

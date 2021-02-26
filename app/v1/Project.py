@@ -4,6 +4,7 @@ import json
 
 from libs.project import *
 from libs.bug import *
+from libs.test import *
 from tools.log import *
 from common.DateEncoder import DateEncoder
 
@@ -153,15 +154,30 @@ def edit_project_api():
     project_id = int(request.values.get('projectId'))
     planner_id = int(request.values.get('plannerId'))
     project_name = request.values.get('projectName')
+    doc_url = request.values.get('docUrl')
+    tester = request.values.get('tester')
+    test_time = request.values.get('testTime')
+    publish_time = request.values.get('publishTime')
+
+    if test_time == 'null':
+        test_time = None
+
+    if publish_time == 'null':
+        publish_time = None
+
+    tester_list = tester.split(',')
 
     if project_id and planner_id and project_name:
-        sql = "SELECT * FROM project WHERE project_id = '%i';" % project_id
-        if db(sql):
-            update_sql = "UPDATE project SET planner_id='%i', project_name='%s' WHERE project_id='%i';"\
-                         % (planner_id, project_name, project_id)
-            status = db(update_sql)
+        if check_project_with_id(project_id):
+            status = edit_project(project_id, planner_id, project_name, doc_url, test_time, publish_time)
             if status:
-                res = {'msg': '成功', 'status': 1}
+                for tester_id in tester_list:
+                    if not check_test_record_with_tester_and_project(int(tester_id), project_id):
+                        status = add_test_record_with_tester_and_project(int(tester_id), project_id)
+                if status:
+                    res = {'msg': '成功', 'status': 1}
+                else:
+                    res = {'msg': '系统错误', 'status': 500}
             else:
                 res = {'msg': '系统错误', 'status': 500}
         else:

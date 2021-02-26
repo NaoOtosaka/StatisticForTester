@@ -44,9 +44,22 @@ def check_test_record_with_tester_and_project(tester_id, project_id):
         return 0
 
 
-def delete_test_record_with_tester_and_project():
+def delete_test_record_with_tester_and_project(tester_id, project_id):
     """
     删除测试跟进记录
     :return:
     """
-    pass
+    sql = """
+    DELETE 
+    FROM 
+    test 
+    WHERE
+    tester_id = %i AND
+    project_id = %i;
+    """ % (tester_id, project_id)
+
+    status = db(sql)
+    if status:
+        return 1
+    else:
+        return 0

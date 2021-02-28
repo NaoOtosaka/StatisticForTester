@@ -12,3 +12,4 @@ def db(sql=None):
         # 执行SQL
         result = StatisticMysqlPool.query(sql)
         return result
+

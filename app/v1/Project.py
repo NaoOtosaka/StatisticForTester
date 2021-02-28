@@ -168,10 +168,11 @@ def edit_project_api():
 
     # 获取测试人员列表id信息类型转换
     tester_list = tester.split(',')
-    list_temp = []
-    for i in tester_list:
-        list_temp.append(int(i))
-    tester_list = list_temp
+    if tester:
+        list_temp = []
+        for i in tester_list:
+            list_temp.append(int(i))
+        tester_list = list_temp
 
     if project_id and planner_id and project_name:
         if check_project_with_id(project_id):

@@ -358,9 +358,9 @@ def edit_project(project_id, planner_id, project_name, doc_url, test_time, publi
     SET"""
 
     if test_time:
-        sql += "test_time=%r," % test_time
+        sql += " test_time=%r," % test_time
     if publish_time:
-        sql += "publish_time=%r," % publish_time
+        sql += " publish_time=%r," % publish_time
 
     sql += """
     planner_id=%i, 

@@ -155,9 +155,8 @@ def edit_project_api():
     planner_id = int(request.values.get('plannerId'))
     project_name = request.values.get('projectName')
     doc_url = request.values.get('docUrl')
-    tester = request.values.get('tester')
-    test_time = request.values.get('testTime')
-    publish_time = request.values.get('publishTime')
+    test_time = int(request.values.get('testTime'))
+    publish_time = int(request.values.get('publishTime'))
 
     # 时间字段完整性判断
     if test_time == 'null':
@@ -166,42 +165,12 @@ def edit_project_api():
     if publish_time == 'null':
         publish_time = None
 
-    # 获取测试人员列表id信息类型转换
-    tester_list = tester.split(',')
-    if tester:
-        list_temp = []
-        for i in tester_list:
-            list_temp.append(int(i))
-        tester_list = list_temp
-
     if project_id and planner_id and project_name:
         if check_project_with_id(project_id):
             status = edit_project(project_id, planner_id, project_name, doc_url, test_time, publish_time)
+            # 状态码判断
             if status:
-                temp = []
-                # 获取项目当前跟进测试人员列表
-                for item in get_tester_with_project(project_id):
-                    temp.append(item['testerId'])
-
-                # 差集运算，取新增人员
-                add_list = set(tester_list).difference(set(temp))
-
-                # 新增跟进关系
-                for tester_id in add_list:
-                    add_test_record_with_tester_and_project(tester_id, project_id)
-
-                # 差集运算，取删除人员
-                delete_list = set(temp).difference(set(tester_list))
-
-                # 删除跟进关系
-                for tester_id in delete_list:
-                    delete_test_record_with_tester_and_project(tester_id, project_id)
-
-                # 状态码判断
-                if status:
-                    res = {'msg': '成功', 'status': 1}
-                else:
-                    res = {'msg': '系统错误', 'status': 500}
+                res = {'msg': '成功', 'status': 1}
             else:
                 res = {'msg': '系统错误', 'status': 500}
         else:
@@ -311,5 +280,62 @@ def developer_count():
         }
     else:
         res = {'msg': '无相关统计信息', 'status': 2001}
+
+    return json.dumps(res, ensure_ascii=False)
+
+
+@project_api.route('/test_record', methods=['PUT'])
+def test_record():
+    """
+    测试人员与项目跟进关系处理
+    :return:
+    """
+    project_id = int(request.values.get('projectId'))
+    tester = request.values.get('tester')
+
+    tag = 1
+
+    tester_list = []
+
+    if tester:
+        list_temp = []
+        # 获取测试人员列表id
+        tester_list = tester.split(',')
+
+        # 数据类型转换
+        for i in tester_list:
+            list_temp.append(int(i))
+        tester_list = list_temp
+
+    temp = []
+
+    # 获取项目当前跟进测试人员列表
+    for item in get_tester_with_project(project_id):
+        temp.append(item['testerId'])
+
+    # 差集运算，取新增人员
+    add_list = set(tester_list).difference(set(temp))
+
+    # 新增跟进关系
+    for tester_id in add_list:
+        tag = add_test_record_with_tester_and_project(tester_id, project_id)
+
+    # 差集运算，取删除人员
+    delete_list = set(temp).difference(set(tester_list))
+
+    # 删除跟进关系
+    for tester_id in delete_list:
+        tag = delete_test_record_with_tester_and_project(tester_id, project_id)
+
+    if tag:
+        res = {
+            'msg': '成功',
+            'status': 1
+        }
+    else:
+        res = {
+            'msg': '系统错误',
+            'status': 1
+        }
 
     return json.dumps(res, ensure_ascii=False)

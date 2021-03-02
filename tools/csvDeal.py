@@ -36,8 +36,8 @@ def choose_file():
 
 def open_csv(file_name):
     if file_name:
-        with open(file_name)as f:
-            f_csv = pandas.read_csv(f, encoding=CONF.ENCODING, header=0, index_col=0)
+        with open(file_name, encoding=CONF.ENCODING)as f:
+            f_csv = pandas.read_csv(f, header=0, index_col=0)
             # print(f_csv['#', '跟踪标签', '主题', '状态', '作者', '指派给', '创建于', '跟进QA'])
             return f_csv
     else:

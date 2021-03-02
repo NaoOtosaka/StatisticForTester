@@ -370,8 +370,6 @@ def edit_project(project_id, planner_id, project_name, doc_url, test_time, publi
     project_id=%i;
     """ % (planner_id, project_name, doc_url, project_id)
 
-    print(sql)
-
     status = db(sql)
     if status:
         return 1

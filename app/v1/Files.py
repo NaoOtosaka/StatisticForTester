@@ -1,5 +1,7 @@
 from flask import Blueprint
 from flask import request
+import random
+import string
 import json
 import os
 
@@ -24,7 +26,8 @@ def upload_csv():
     logger.debug(file_obj)
     if file_obj:
         timestamp = int(round(time.time() * 1000))
-        file_name = 'yxz-' + str(timestamp) + '.csv'
+        ran_str = ''.join(random.sample(string.ascii_letters + string.digits, 5))
+        file_name = 'yxz-' + str(timestamp) + ran_str + '.csv'
         logger.debug(file_obj)
         path = os.path.join(CONF.FILES_PATH, file_name)
         logger.debug(type(path))

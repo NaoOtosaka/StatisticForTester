@@ -1,5 +1,6 @@
 from flask import Blueprint
 from flask import request
+import threading
 import random
 import string
 import json
@@ -14,6 +15,9 @@ logger = setLogger('files_api')
 
 # 实例化蓝图
 files_api = Blueprint('files', __name__, url_prefix='/files')
+
+# 初始化锁
+project_lock = threading.Lock()
 
 
 @files_api.route('/upload', methods=['POST'])
@@ -33,7 +37,7 @@ def upload_csv():
         logger.debug(type(path))
         file_obj.save(path)
         try:
-            api_main(path)
+            api_main(path, project_lock)
             res = {
                 'msg': "成功",
                 'status': 1

@@ -262,7 +262,7 @@ def add_bug(tester_id, developer_id, phase_id, bug_type, category, kb_id, title,
     (%i, %i, %i, %i, %i, %i, '%s', '%s', %r, %r, %s, %s, %s)
     """ % (tester_id, developer_id, phase_id, bug_type, category, kb_id, title, model, create_time, close_time,
            is_finished, is_closed, is_online)
-    logger.debug(sql)
+    # logger.debug(sql)
     status = db(sql)
     if status:
         return 1
@@ -295,7 +295,7 @@ def edit_bug(tester_id, developer_id, phase_id, bug_type, category, kb_id, title
     """ % (tester_id, developer_id, phase_id, bug_type, category, title, model, create_time, close_time, is_finished,
            is_closed, is_online, kb_id)
 
-    logger.debug(sql)
+    # logger.debug(sql)
     status = db(sql)
     if status:
         return 1

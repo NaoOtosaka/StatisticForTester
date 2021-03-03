@@ -44,36 +44,45 @@ def open_csv(file_name):
         return False
 
 
-def process_file(csv_object):
+def process_file(csv_object, project_lock):
     """
     csv内容处理
+    :param project_lock:
     :param csv_object:
     :return:
     """
     # 初始化线程组
     threads = []
+    #
+    # # 初始化锁
+    # project_lock = threading.Lock()
 
     bug_data = []
     # 数据遍历
     for index, data in csv_object.iterrows():
-        process_data(index, data, bug_data)
-    #
-    #     t = threading.Thread(target=process_data, args=(index, data, bug_data,))
-    #     threads.append(t)
-    #     # 启动线程
-    # for insert in threads:
-    #     insert.start()
-    #
-    #     # 守护线程
-    # for insert in threads:
-    #     insert.join()
+        # process_data(index, data, bug_data, project_lock)
+        # 线程操作
+        t = threading.Thread(target=process_data, args=(index, data, bug_data, project_lock,))
+        threads.append(t)
+    # 启动线程
+    for insert in threads:
+        insert.start()
+
+    # 守护线程
+    for insert in threads:
+        insert.join()
 
     return bug_data
 
 
-def process_data(index, data, bug_data):
+def process_data(index, data, bug_data, lock):
     """
     基础数据提取(线程封装)
+    :param index:
+    :param data:
+    :param bug_data:
+    :param lock:
+    :type lock threading.Lock
     :return:
     """
     if 'BUG' in data['跟踪标签'] or '开发' in data['跟踪标签']:
@@ -91,13 +100,13 @@ def process_data(index, data, bug_data):
             model = process_model(title_info)
 
             # 项目阶段处理
-            phase_id = get_phase_info(title_info[0], title_info[2], data['项目'])
+            phase_id = get_phase_info(title_info[0], title_info[2], data['项目'], lock)
 
             # 测试人员
-            tester_id = process_tester(reserve_chinese(data['跟进QA']))
+            tester_id = process_tester(reserve_chinese(data['跟进QA']), lock)
 
             # 开发人员
-            developer_id = process_developer(reserve_chinese(data['指派给']))
+            developer_id = process_developer(reserve_chinese(data['指派给']), lock)
 
             # BUG标签
             bug_type = process_bug_type(data['跟踪标签'])
@@ -135,9 +144,10 @@ def process_data(index, data, bug_data):
                                          create_time, close_time, is_finish, is_close, is_online))
 
 
-def get_phase_info(project, plan, category):
+def get_phase_info(project, plan, category, lock):
     """
     根据项目名与计划获取对应项目阶段id
+    :param lock: 线程锁
     :param category:
     :param project:
     :param plan:
@@ -145,17 +155,24 @@ def get_phase_info(project, plan, category):
     """
     logger.debug(plan)
 
-    project_id = int(process_project(project, category))
+    project_id = int(process_project(project, category, lock))
     plan_id = int(process_plan(plan))
 
-    temp = get_plan_with_project_and_plan(project_id, plan_id)
-    if temp:
-        return temp[0]
-    else:
-        if add_phase(project_id, plan_id):
-            return get_phase_insert_id()
+    # 加锁
+    lock.acquire(timeout=10)
+    try:
+        temp = get_plan_with_project_and_plan(project_id, plan_id)
+
+        if temp:
+            return temp[0]
         else:
-            return False
+            if add_phase(project_id, plan_id):
+                return get_phase_insert_id()
+            else:
+                return False
+    finally:
+        # 解锁
+        lock.release()
 
 
 def process_title(title, kb_id):
@@ -249,9 +266,10 @@ def process_project_category(category):
     return category_id
 
 
-def process_project(project, category):
+def process_project(project, category, lock):
     """
     项目名称操作
+    :param lock:
     :param category:
     :param project:
     :return:
@@ -263,13 +281,23 @@ def process_project(project, category):
 
     category_id = process_project_category(category)
 
-    project_id = check_project_with_name(project)
-    # print(project_id)
-    # 项目不存在则创建
-    if not project_id:
-        add_project(planner, project, category_id)
-        project_id = get_project_insert_id()
+    # 加锁
+    lock.acquire(timeout=20)
+    try:
+        project_id = check_project_with_name(project)
+        # print(project_id)
+        # 项目不存在则创建
+        if not project_id:
+            add_project(planner, project, category_id)
+
+            project_id = get_project_insert_id()
+    finally:
+        # 修改完成，释放锁
+        lock.release()
+
     return project_id
+
+
 
 
 def process_plan(plan):
@@ -285,23 +313,31 @@ def process_plan(plan):
         logger.error('系统异常')
 
 
-def process_tester(tester):
+def process_tester(tester, lock):
     """
     测试人员处理
+    :param lock:
     :param tester:
     :return:
     """
     # 测试用置空
     tester_email = ''
 
-    tester_id = check_tester_with_name(tester)
-    if not tester_id:
-        add_tester(tester, tester_email)
-        tester_id = get_tester_insert_id()
+    # 加锁
+    lock.acquire(timeout=10)
+    try:
+        tester_id = check_tester_with_name(tester)
+        if not tester_id:
+            add_tester(tester, tester_email)
+            tester_id = get_tester_insert_id()
+    finally:
+        # 修改完成，释放锁
+        lock.release()
+
     return tester_id
 
 
-def process_developer(developer):
+def process_developer(developer, lock):
     """
     开发人员处理
     :param developer:
@@ -310,10 +346,17 @@ def process_developer(developer):
     # 测试用置空
     developer_email = ''
 
-    developer_id = check_developer_with_name(developer)
-    if not developer_id:
-        add_developer(developer, developer_email)
-        developer_id = get_developer_insert_id()
+    # 加锁
+    lock.acquire(timeout=10)
+    try:
+        developer_id = check_developer_with_name(developer)
+        if not developer_id:
+            add_developer(developer, developer_email)
+            developer_id = get_developer_insert_id()
+    finally:
+        # 修改完成，释放锁
+        lock.release()
+
     return developer_id
 
 
@@ -416,10 +459,13 @@ def local_main():
     # 初始化线程组
     threads = []
 
+    # 初始化锁
+    project_lock = threading.Lock()
+
     file_name = choose_file()
     if file_name:
         csv_object = open_csv(file_name)
-        bug_data = process_file(csv_object)
+        bug_data = process_file(csv_object, project_lock)
         for data in bug_data:
             t = threading.Thread(target=insert_bug_info, args=(data,))
             threads.append(t)
@@ -432,14 +478,15 @@ def local_main():
         insert.join()
 
 
-def api_main(file_name):
+def api_main(file_name, project_lock):
     """
     API主逻辑
+    :param project_lock:
     :param file_name 文件路径
     :return:
     """
     csv_object = open_csv(file_name)
-    bug_data = process_file(csv_object)
+    bug_data = process_file(csv_object, project_lock)
     for data in bug_data:
         insert_bug_info(data)
 

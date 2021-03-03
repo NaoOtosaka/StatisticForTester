@@ -23,6 +23,7 @@ def setup(flask_server, debug):
         # 启动参数
         flask_server.run(port=CONF.API_PORT, debug=CONF.DEBUG, host=CONF.API_HOST, threaded=True)
     else:
+        # 协程启动
         server = pywsgi.WSGIServer((CONF.API_HOST, CONF.API_PORT), flask_server)
         server.serve_forever()
 

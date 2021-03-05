@@ -244,8 +244,13 @@ def bug_phase_type():
         result = get_bug_type_count_with_project_phase(project_id)
         if result:
             plan_list = []
+
+            plan_temp = get_phase_info_with_project(project_id)
+            for value in plan_temp:
+                plan_list.append(value['name'])
+
             type_list = []
-            temp = {}
+            data_temp = {}
             for value in result:
                 if value[0] not in type_list:
                     type_list.append(value[0])
@@ -253,15 +258,22 @@ def bug_phase_type():
                     plan_list.append(value[1])
 
             for type_value in type_list:
-                temp[type_value] = {}
+                data_temp[type_value] = {}
                 for plan in plan_list:
-                    temp[type_value][plan] = 0
+                    data_temp[type_value][plan] = 0
 
             for value in result:
-                temp[value[0]][value[1]] = value[2]
+                data_temp[value[0]][value[1]] = value[2]
+
+            res_temp = {
+                'planList': plan_list,
+                'typeList': type_list,
+                'data': data_temp
+            }
+
             res = {
                 'msg': '成功',
-                'data': temp,
+                'data': res_temp,
                 'status': 1
             }
         else:

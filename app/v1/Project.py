@@ -209,7 +209,7 @@ def delete_project_api():
 @project_api.route('/bug_type', methods=['get'])
 def bug_type():
     """
-    根据测试人员或许BUG类型
+    根据项目获取BUG类型
     传入空时统计全部类型数据
     :return:
     """
@@ -232,10 +232,48 @@ def bug_type():
     return json.dumps(res, ensure_ascii=False)
 
 
+@project_api.route('/bug_phase_type', methods=['GET'])
+def bug_phase_type():
+    """
+    根据项目获取每个项目阶段BUG类型数
+    :return:
+    """
+    project_id = int(request.values.get('projectId'))
+
+    if project_id:
+        result = get_bug_type_count_with_project_phase(project_id)
+        if result:
+            plan_list = []
+            type_list = []
+            temp = {}
+            for value in result:
+                if value[0] not in type_list:
+                    type_list.append(value[0])
+                if value[1] not in plan_list:
+                    plan_list.append(value[1])
+
+            for type_value in type_list:
+                temp[type_value] = {}
+                for plan in plan_list:
+                    temp[type_value][plan] = 0
+
+            for value in result:
+                temp[value[0]][value[1]] = value[2]
+            res = {
+                'msg': '成功',
+                'data': temp,
+                'status': 1
+            }
+        else:
+            res = {'msg': '无相关统计信息', 'status': 2001}
+
+        return json.dumps(res, ensure_ascii=False)
+
+
 @project_api.route('/bug_category', methods=['get'])
 def bug_category():
     """
-    根据测试人员或许BUG类型
+    根据项目获取BUG分类
     传入空时统计全部类型数据
     :return:
     """
@@ -339,3 +377,5 @@ def test_record():
         }
 
     return json.dumps(res, ensure_ascii=False)
+
+

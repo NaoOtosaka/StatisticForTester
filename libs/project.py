@@ -370,6 +370,8 @@ def edit_project(project_id, planner_id, project_name, doc_url, test_time, publi
     project_id=%i;
     """ % (planner_id, project_name, doc_url, project_id)
 
+    print(sql)
+
     status = db(sql)
     if status:
         return 1
@@ -415,6 +417,40 @@ def get_bug_type_count_with_project(project_id):
         project.project_id = %i
     GROUP BY
         bug_type.type_name
+    """ % project_id
+
+    result = db(sql)
+    if result:
+        logger.debug(result)
+        return result
+    else:
+        return False
+
+
+def get_bug_type_count_with_project_phase(project_id):
+    """
+    根据项目id获取每个项目阶段BUG类型数
+    :param project_id:
+    :return:
+    """
+    sql = """
+    SELECT
+    bug_type.type_name,
+    test_plan.plan_name,
+    Count(1)
+    FROM
+    bug
+    INNER JOIN bug_type ON bug.bug_type = bug_type.type_id
+    INNER JOIN project_phases ON bug.phase_id = project_phases.phase_id
+    INNER JOIN test_plan ON project_phases.plan_id = test_plan.plan_id
+    WHERE
+    project_phases.project_id = %i
+    GROUP BY
+    bug_type.type_name,
+    test_plan.plan_id
+    ORDER BY
+    bug_type.type_name ASC,
+    test_plan.plan_id ASC
     """ % project_id
 
     result = db(sql)
@@ -479,3 +515,7 @@ def get_bug_developer_count_with_project(project_id):
         return result
     else:
         return False
+
+
+if __name__ == '__main__':
+    pass

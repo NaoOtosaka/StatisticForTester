@@ -215,3 +215,49 @@ def delete_bug_api():
         res = {'msg': '该缺陷不存在', 'status': 2001}
 
     return json.dumps(res, ensure_ascii=False)
+
+
+@bug_api.route('/category/list', methods=['GET'])
+def category_list():
+    """
+    获取BUG分类列表
+    :return:
+    """
+    result = get_category_list()
+
+    if result:
+        res = {
+            'msg': '成功',
+            'data': result,
+            'status': 1
+        }
+    else:
+        res = {'msg': '无BUG分类信息', 'status': 2001}
+
+    return json.dumps(res, ensure_ascii=False)
+
+
+@bug_api.route('/edit_category', methods=['PUT'])
+def edit_category():
+    """
+    获取BUG分类列表
+    :return:
+    """
+    # 接收入参
+    kb_id = int(request.values.get('kbId'))
+    bug_category = int(request.values.get('bugCategory'))
+
+    result = edit_bug_category(kb_id, bug_category)
+
+    if result:
+        if check_bug_with_kb_id(kb_id):
+            res = {
+                'msg': '成功',
+                'status': 1
+            }
+        else:
+            res = {'msg': '系统错误', 'status': 2001}
+    else:
+        res = {'msg': '该缺陷不存在', 'status': 2001}
+
+    return json.dumps(res, ensure_ascii=False)

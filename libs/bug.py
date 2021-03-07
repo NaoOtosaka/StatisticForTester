@@ -290,8 +290,23 @@ def edit_bug(tester_id, developer_id, phase_id, bug_type, category, kb_id, title
     :return:
     """
     sql = """
-    UPDATE bug SET tester_id=%i, developer_id=%i, phase_id=%i, bug_type=%i, category=%i, title='%s', 
-    model='%s', create_time=%i, close_time=%i, is_finished='%s', is_closed='%s', is_online='%s' WHERE kb_id=%i;
+    UPDATE 
+    bug 
+    SET 
+    tester_id = %i,
+    developer_id = %i,
+    phase_id = %i,
+    bug_type = %i,
+    category = %i,
+    title = '%s',
+    model = '%s',
+    create_time = %i,
+    close_time = %i,
+    is_finished = '%s',
+    is_closed = '%s',
+    is_online = '%s'
+    WHERE
+    kb_id = %i;
     """ % (tester_id, developer_id, phase_id, bug_type, category, title, model, create_time, close_time, is_finished,
            is_closed, is_online, kb_id)
 
@@ -487,3 +502,28 @@ def get_bug_developer_count():
         return result
     else:
         return False
+
+
+def edit_bug_category(kb_id, category):
+    """
+    编辑Bug分类
+    :param category:
+    :param kb_id:
+    :return:
+    """
+    sql = """
+    UPDATE 
+    bug 
+    SET 
+    category = %i
+    WHERE
+    kb_id = %i;
+    """ % (category, kb_id)
+
+    # logger.debug(sql)
+    status = db(sql)
+    if status:
+        return 1
+    else:
+        return 0
+

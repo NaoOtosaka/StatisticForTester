@@ -49,3 +49,33 @@ def check_category_with_name(category_name):
         return result[0][0]
     else:
         return 0
+
+
+def get_category_list():
+    """
+    获取BUG分类列表
+    :return:
+    """
+    sql = """
+    SELECT
+        * 
+    FROM
+        bug_category
+    """
+
+    temp = []
+
+    result = db(sql)
+    if result:
+        logger.debug(result)
+        for i in range(len(result)):
+            temp.append(
+                {
+                    'categoryId': result[i][0],
+                    'categoryName': result[i][1]
+                }
+            )
+        return temp
+    else:
+        return []
+

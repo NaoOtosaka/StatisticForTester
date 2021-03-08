@@ -517,5 +517,53 @@ def get_bug_developer_count_with_project(project_id):
         return False
 
 
+def get_bug_trend_with_project(project_id):
+    """
+    BUG趋势统计
+    :return:
+    """
+    date = '%Y-%m-%d'
+    sql = """
+    SELECT
+        date,
+        COUNT( COUNT ) 
+    FROM
+        (
+    SELECT
+        FROM_UNIXTIME( bug.create_time, '%s' ) AS date,
+        Count( bug.bug_id ) AS count 
+    FROM
+        project
+        INNER JOIN project_phases ON project.project_id = project_phases.project_id
+        INNER JOIN bug ON project_phases.phase_id = bug.phase_id 
+    WHERE
+        project.project_id = %i
+    GROUP BY
+        bug.create_time 
+    ORDER BY
+        bug.create_time ASC 
+        ) AS data
+    GROUP BY
+        date 
+    ORDER BY
+        date ASC
+    """ % (date, project_id)
+
+    result = db(sql)
+
+    if result:
+        logger.debug(result)
+        temp = {
+            'startDate': result[0][0],
+            'endDate': result[-1][0],
+            'data': {}
+        }
+        for item in result:
+            temp['data'][item[0]] = item[1]
+        return temp
+    else:
+        return False
+
+
 if __name__ == '__main__':
     pass

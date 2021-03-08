@@ -391,3 +391,28 @@ def test_record():
     return json.dumps(res, ensure_ascii=False)
 
 
+@project_api.route('/bug_trend', methods=['get'])
+def bug_trend():
+    """
+    获取bug增长趋势
+    :return:
+    """
+    project_id = request.values.get('projectId')
+
+    if project_id:
+        result = get_bug_trend_with_project(int(project_id))
+    else:
+        result = get_bug_trend()
+
+    if result:
+        res = {
+            'msg': '成功',
+            'data': result,
+            'status': 1
+        }
+    else:
+        res = {'msg': '无相关统计信息', 'status': 2001}
+
+    return json.dumps(res, ensure_ascii=False)
+
+

@@ -298,8 +298,6 @@ def process_project(project, category, lock):
     return project_id
 
 
-
-
 def process_plan(plan):
     """
     测试计划操作
@@ -324,7 +322,7 @@ def process_tester(tester, lock):
     tester_email = ''
 
     # 加锁
-    lock.acquire(timeout=10)
+    lock.acquire(timeout=20)
     try:
         tester_id = check_tester_with_name(tester)
         if not tester_id:
@@ -340,6 +338,7 @@ def process_tester(tester, lock):
 def process_developer(developer, lock):
     """
     开发人员处理
+    :param lock:
     :param developer:
     :return:
     """

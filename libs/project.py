@@ -192,7 +192,9 @@ def get_phase_info_with_project(project_id):
         'phaseId': int,
         'name': string,
         'startTime' timestamp,
-        'endTime' timestamp
+        'endTime' timestamp，
+        'count' int,
+        'passRate' float
     }
     """
     sql = """
@@ -201,7 +203,8 @@ def get_phase_info_with_project(project_id):
         test_plan.plan_name,
         project_phases.start_time,
         project_phases.end_time,
-        Count(bug.bug_id) as count
+        Count(bug.bug_id) as count,
+        project_phases.pass_rate
         FROM
         project
         INNER JOIN project_phases ON project_phases.project_id = project.project_id
@@ -231,7 +234,8 @@ def get_phase_info_with_project(project_id):
                     'name': result[i][1],
                     'startTime': result[i][2],
                     'endTime': result[i][3],
-                    'count': result[i][4]
+                    'count': result[i][4],
+                    'pass_rate': result[i][5]
                 }
             )
         return temp

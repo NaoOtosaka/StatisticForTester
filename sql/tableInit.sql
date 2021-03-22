@@ -200,13 +200,25 @@ CREATE TABLE `project_phases`  (
   `phase_id` int(11) NOT NULL AUTO_INCREMENT,
   `project_id` int(11) NOT NULL,
   `plan_id` int(11) NOT NULL,
-  `start_time` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0),
-  `end_time` timestamp(0) NOT NULL,
   PRIMARY KEY (`phase_id`) USING BTREE,
   INDEX `phasesProjectId`(`project_id`) USING BTREE,
   INDEX `phasesPlanId`(`plan_id`) USING BTREE,
   CONSTRAINT `phasesPlanId` FOREIGN KEY (`plan_id`) REFERENCES `test_plan` (`plan_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `phasesProjectId` FOREIGN KEY (`project_id`) REFERENCES `project` (`project_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for test_platform
+-- ----------------------------
+DROP TABLE IF EXISTS `test_platform`;
+CREATE TABLE `test_platform` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+	`phase_id`int(11) NOT NULL,
+  `start_time` bigint,
+	`end_time` bigint,
+	`pass_rate` float(4,2),
+	PRIMARY KEY (`id`) USING BTREE,
+	CONSTRAINT `phasesPlatformId` FOREIGN KEY (`id`) REFERENCES `project_phases` (`phase_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------

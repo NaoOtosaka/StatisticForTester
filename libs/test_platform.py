@@ -67,7 +67,7 @@ def add_platform(phase_id, pass_rate, desc):
     sql = """
     INSERT INTO `test_platform`(test_platform.phase_id, test_platform.pass_rate, test_platform.desc)
     VALUES
-        ( %i, %f, %s);
+        ( %i, %.2f, '%s');
     """ % (phase_id, pass_rate, desc)
 
     status = db(sql)
@@ -99,7 +99,7 @@ def edit_platform(platform_id, phase_id, pass_rate, desc, start_time=None, end_t
 
     sql += """
         phase_id=%i, 
-        pass_rate=%f,
+        pass_rate=%.2f,
         desc='%s'
         WHERE 
         id=%i;

@@ -470,6 +470,7 @@ def add_phase_platform_api():
     """
     phase_id = int(request.values.get('phaseId'))
     pass_rate = float(request.values.get('passRate'))
+    print(pass_rate)
     desc = request.values.get('desc')
 
     logger.info(phase_id)

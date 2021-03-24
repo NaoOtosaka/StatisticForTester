@@ -93,14 +93,14 @@ def edit_platform(platform_id, phase_id, pass_rate, desc, start_time=None, end_t
         SET"""
 
     if start_time:
-        sql += " start_time=%r," % start_time
+        sql += " test_platform.start_time=%r," % start_time
     if end_time:
-        sql += " end_time=%r," % end_time
+        sql += " test_platform.end_time=%r," % end_time
 
     sql += """
-        phase_id=%i, 
-        pass_rate=%.2f,
-        desc='%s'
+        test_platform.phase_id=%i, 
+        test_platform.pass_rate=%.2f,
+        test_platform.desc='%s'
         WHERE 
         id=%i;
         """ % (phase_id, pass_rate, desc, platform_id)

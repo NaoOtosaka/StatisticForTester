@@ -404,6 +404,27 @@ def edit_project(project_id, planner_id, project_name, doc_url, test_time, publi
         return 0
 
 
+def delete_project(project_id):
+    """
+    删除项目
+    :param project_id:
+    :return:
+    """
+    sql = """
+    DELETE 
+    FROM
+        project 
+    WHERE
+        project_id = '%i';
+    """ % project_id
+
+    status = db(sql)
+    if status:
+        return 1
+    else:
+        return 0
+
+
 def get_project_insert_id():
     """
     获取新增后id

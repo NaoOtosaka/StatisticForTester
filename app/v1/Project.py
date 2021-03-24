@@ -188,14 +188,11 @@ def delete_project_api():
     :return:
     """
     # 接收入参
-    project_id = int(request.json.get('projectId'))
+    project_id = int(request.values.get('projectId'))
 
     if project_id:
-        sql = "SELECT * FROM project WHERE project_id = '%i';" % project_id
-        if db(sql):
-            delete_sql = "DELETE FROM project WHERE project_id='%i';" % project_id
-            status = db(delete_sql)
-            if status:
+        if check_project_with_id(project_id):
+            if delete_project(project_id):
                 res = {'msg': '成功', 'status': 1}
             else:
                 res = {'msg': '系统错误', 'status': 500}
@@ -498,10 +495,8 @@ def edit_phase_platform_api():
     phase_id = int(request.values.get('phaseId'))
     pass_rate = float(request.values.get('passRate'))
     desc = request.values.get('desc')
-    start_time = int(request.values.get('startTime'))
-    end_time = int(request.values.get('endTime'))
-
-    logger.info(phase_id + pass_rate + desc + start_time + end_time)
+    start_time = request.values.get('startTime')
+    end_time = request.values.get('endTime')
 
     # 时间字段完整性判断
     if start_time == 'null':
@@ -532,7 +527,7 @@ def delete_phase_platform_api():
     :return:
     """
     # 接收入参
-    platform_id = int(request.json.get('platformId'))
+    platform_id = int(request.values.get('platformId'))
 
     if platform_id:
         if check_platform_with_id(platform_id):

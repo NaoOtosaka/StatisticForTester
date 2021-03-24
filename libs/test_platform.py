@@ -48,10 +48,24 @@ def get_platform_info_with_phase(phase_id):
     project_phases.phase_id = %i
     """ % phase_id
 
+    temp = []
+
     result = db(sql)
     if result:
         logger.debug(result)
-        return result
+
+        for i in range(len(result)):
+            temp.append(
+                {
+                    'platform_id': result[i][0],
+                    'desc': result[i][1],
+                    'start_time': result[i][2],
+                    'end_time': result[i][3],
+                    'pass_rate': result[i][4]
+                }
+            )
+
+        return temp
     else:
         return []
 

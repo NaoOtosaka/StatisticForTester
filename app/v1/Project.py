@@ -446,7 +446,7 @@ def show_phase_platform_api(project_id):
                 {
                     'phase_id': phase[0],
                     'plan_name': phase[1],
-                    'platform_list':platform_data
+                    'platform_list': platform_data
                 }
             )
         res = {

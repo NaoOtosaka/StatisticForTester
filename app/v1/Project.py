@@ -5,6 +5,7 @@ import json
 from libs.project import *
 from libs.bug import *
 from libs.test import *
+from libs.test_platform import *
 from tools.log import *
 from common.DateEncoder import DateEncoder
 
@@ -282,7 +283,7 @@ def bug_phase_type():
         return json.dumps(res, ensure_ascii=False)
 
 
-@project_api.route('/bug_category', methods=['get'])
+@project_api.route('/bug_category', methods=['GET'])
 def bug_category():
     """
     根据项目获取BUG分类
@@ -308,7 +309,7 @@ def bug_category():
     return json.dumps(res, ensure_ascii=False)
 
 
-@project_api.route('/developer_count', methods=['get'])
+@project_api.route('/developer_count', methods=['GET'])
 def developer_count():
     """
     根据测试人员或许BUG类型
@@ -403,7 +404,6 @@ def bug_trend():
         result = get_bug_trend_with_project(int(project_id))
     else:
         result = get_bug_trend()
-
     if result:
         res = {
             'msg': '成功',
@@ -416,3 +416,132 @@ def bug_trend():
     return json.dumps(res, ensure_ascii=False)
 
 
+@project_api.route('/<path:project_id>/phase_platform', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def phase_platform(project_id):
+    if request.method == 'GET':
+        # 获取测试阶段平台基础信息
+        return show_phase_platform_api(project_id)
+    elif request.method == 'POST':
+        # 创建测试阶段平台分类
+        return add_phase_platform_api()
+    elif request.method == 'PUT':
+        # 编辑测试阶段平台分类
+        return edit_phase_platform_api()
+    elif request.method == 'DELETE':
+        # 删除测试阶段平台分类
+        return delete_phase_platform_api()
+
+
+def show_phase_platform_api(project_id):
+    """
+    展示对应项目所有阶段通过率信息
+    :return:
+    """
+    project_id = int(project_id)
+    list_data = get_phase_list_with_project(project_id)
+
+    res_data = []
+
+    try:
+        for phase in list_data:
+            platform_data = get_platform_info_with_phase(phase[0])
+            res_data.append(
+                {
+                    'phase_id': phase[0],
+                    'plan_name': phase[1],
+                    'platform_list':platform_data
+                }
+            )
+        res = {
+            'msg': '成功',
+            'data': res_data,
+            'status': 1
+        }
+    except:
+        res = {'msg': '系统错误', 'status': 4001}
+
+    return json.dumps(res, ensure_ascii=False)
+
+
+def add_phase_platform_api():
+    """
+    创建测试阶段平台分类
+    :return:
+    """
+    phase_id = int(request.values.get('phaseId'))
+    pass_rate = float(request.values.get('passRate'))
+    desc = request.values.get('desc')
+
+    logger.info(phase_id)
+    logger.info(pass_rate)
+    logger.info(desc)
+
+    if phase_id and pass_rate and desc:
+        status = add_platform(phase_id, pass_rate, desc)
+        if status:
+            res = {'msg': '成功', 'status': 1}
+        else:
+            res = {'msg': '系统错误', 'status': 500}
+    else:
+        res = {'msg': '参数错误', 'status': 4001}
+
+    return json.dumps(res, ensure_ascii=False)
+
+
+def edit_phase_platform_api():
+    """
+    编辑测试阶段平台分类
+    :return:
+    """
+    platform_id = int(request.values.get('platformId'))
+    phase_id = int(request.values.get('phaseId'))
+    pass_rate = float(request.values.get('passRate'))
+    desc = request.values.get('desc')
+    start_time = int(request.values.get('startTime'))
+    end_time = int(request.values.get('endTime'))
+
+    logger.info(phase_id + pass_rate + desc + start_time + end_time)
+
+    # 时间字段完整性判断
+    if start_time == 'null':
+        start_time = None
+
+    if end_time == 'null':
+        end_time = None
+
+    if platform_id and phase_id and pass_rate and desc:
+        if check_platform_with_id(platform_id):
+            status = edit_platform(platform_id, phase_id, pass_rate, desc, start_time=start_time, end_time=end_time)
+            # 状态码判断
+            if status:
+                res = {'msg': '成功', 'status': 1}
+            else:
+                res = {'msg': '系统错误', 'status': 500}
+        else:
+            res = {'msg': '项目不存在', 'status': 2001}
+    else:
+        res = {'msg': '参数错误', 'status': 4001}
+
+    return json.dumps(res, ensure_ascii=False)
+
+
+def delete_phase_platform_api():
+    """
+    编辑测试阶段平台分类
+    :return:
+    """
+    # 接收入参
+    platform_id = int(request.json.get('platformId'))
+
+    if platform_id:
+        if check_platform_with_id(platform_id):
+            if delete_platform(platform_id):
+                res = {'msg': '成功', 'status': 1}
+            else:
+                res = {'msg': '系统错误', 'status': 500}
+        else:
+            res = {'msg': '记录不存在', 'status': 2001}
+    else:
+        res = {'msg': '参数错误', 'status': 4001}
+
+    return json.dumps(res, ensure_ascii=False)

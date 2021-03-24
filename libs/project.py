@@ -183,6 +183,32 @@ def get_tester_with_project(project_id):
         return []
 
 
+def get_phase_list_with_project(project_id):
+    """
+    根据项目ID获取对应阶段列表
+    :param project_id:
+    :return:
+    """
+    sql = """
+    SELECT
+    project_phases.phase_id,
+    test_plan.plan_name
+    FROM
+    project
+    INNER JOIN project_phases ON project_phases.project_id = project.project_id
+    INNER JOIN test_plan ON project_phases.plan_id = test_plan.plan_id
+    WHERE
+    project.project_id = %i
+    """ % project_id
+
+    result = db(sql)
+    if result:
+        logger.debug(result)
+        return result
+    else:
+        return False
+
+
 def get_phase_info_with_project(project_id):
     """
     根据项目ID获取对应项目进度
@@ -193,8 +219,7 @@ def get_phase_info_with_project(project_id):
         'name': string,
         'startTime' timestamp,
         'endTime' timestamp，
-        'count' int,
-        'passRate' float
+        'count' int
     }
     """
     sql = """
@@ -203,8 +228,7 @@ def get_phase_info_with_project(project_id):
         test_plan.plan_name,
         project_phases.start_time,
         project_phases.end_time,
-        Count(bug.bug_id) as count,
-        project_phases.pass_rate
+        Count(bug.bug_id) as count
         FROM
         project
         INNER JOIN project_phases ON project_phases.project_id = project.project_id
@@ -234,8 +258,7 @@ def get_phase_info_with_project(project_id):
                     'name': result[i][1],
                     'startTime': result[i][2],
                     'endTime': result[i][3],
-                    'count': result[i][4],
-                    'pass_rate': result[i][5]
+                    'count': result[i][4]
                 }
             )
         return temp
@@ -373,8 +396,6 @@ def edit_project(project_id, planner_id, project_name, doc_url, test_time, publi
     WHERE 
     project_id=%i;
     """ % (planner_id, project_name, doc_url, project_id)
-
-    print(sql)
 
     status = db(sql)
     if status:

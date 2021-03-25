@@ -45,7 +45,7 @@ def get_platform_info_with_phase(phase_id):
     test_platform
     INNER JOIN project_phases ON test_platform.id = project_phases.phase_id
     WHERE
-    project_phases.phase_id = %i
+    test_platform.phase_id = %i
     """ % phase_id
 
     temp = []

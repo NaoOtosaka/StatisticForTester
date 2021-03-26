@@ -200,6 +200,8 @@ CREATE TABLE `project_phases`  (
   `phase_id` int(11) NOT NULL AUTO_INCREMENT,
   `project_id` int(11) NOT NULL,
   `plan_id` int(11) NOT NULL,
+	`start_time` bigint,
+	`end_time` bigint,
   PRIMARY KEY (`phase_id`) USING BTREE,
   INDEX `phasesProjectId`(`project_id`) USING BTREE,
   INDEX `phasesPlanId`(`plan_id`) USING BTREE,
@@ -214,11 +216,24 @@ DROP TABLE IF EXISTS `test_platform`;
 CREATE TABLE `test_platform` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
 	`phase_id`int(11) NOT NULL,
+	`desc` VARCHAR(255) NOT NULL,
   `start_time` bigint,
 	`end_time` bigint,
 	`pass_rate` float(4,2),
 	PRIMARY KEY (`id`) USING BTREE,
-	CONSTRAINT `phasesPlatformId` FOREIGN KEY (`id`) REFERENCES `project_phases` (`phase_id`) ON DELETE CASCADE ON UPDATE CASCADE
+	CONSTRAINT `phasesPlatformId` FOREIGN KEY (`phase_id`) REFERENCES `project_phases` (`phase_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for platform_tag
+-- ----------------------------
+DROP TABLE IF EXISTS `platform_tag`;
+CREATE TABLE `platform_tag` (
+  `tag_id` INT(11) NOT NULL AUTO_INCREMENT,
+	`project_id`int(11) NOT NULL,
+	`tag_name` VARCHAR(255) NOT NULL,
+	PRIMARY KEY (`tag_id`) USING BTREE,
+	CONSTRAINT `ProjectTagId` FOREIGN KEY (`project_id`) REFERENCES `project` (`project_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------

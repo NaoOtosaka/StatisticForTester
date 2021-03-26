@@ -437,16 +437,19 @@ def show_phase_platform_api(project_id):
     project_id = int(project_id)
     list_data = get_phase_list_with_project(project_id)
 
+    print(list_data)
+
     res_data = []
 
     try:
         for phase in list_data:
+            print(phase)
             platform_data = get_platform_info_with_phase(phase[0])
             res_data.append(
                 {
-                    'phase_id': phase[0],
-                    'plan_name': phase[1],
-                    'platform_list': platform_data
+                    'phaseId': phase[0],
+                    'planName': phase[1],
+                    'platformList': platform_data
                 }
             )
         res = {
@@ -492,7 +495,7 @@ def edit_phase_platform_api():
     :return:
     """
     platform_id = int(request.values.get('platformId'))
-    phase_id = int(request.values.get('phaseId'))
+    # phase_id = int(request.values.get('phaseId'))
     pass_rate = float(request.values.get('passRate'))
     desc = request.values.get('desc')
     start_time = request.values.get('startTime')
@@ -505,9 +508,9 @@ def edit_phase_platform_api():
     if end_time == 'null':
         end_time = None
 
-    if platform_id and phase_id and pass_rate and desc:
+    if platform_id and pass_rate and desc:
         if check_platform_with_id(platform_id):
-            status = edit_platform(platform_id, phase_id, pass_rate, desc, start_time=start_time, end_time=end_time)
+            status = edit_platform(platform_id, pass_rate, desc, start_time=start_time, end_time=end_time)
             # 状态码判断
             if status:
                 res = {'msg': '成功', 'status': 1}

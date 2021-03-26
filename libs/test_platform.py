@@ -43,7 +43,7 @@ def get_platform_info_with_phase(phase_id):
     test_platform.pass_rate
     FROM
     test_platform
-    INNER JOIN project_phases ON test_platform.id = project_phases.phase_id
+    INNER JOIN project_phases ON test_platform.phase_id = project_phases.phase_id
     WHERE
     test_platform.phase_id = %i
     """ % phase_id
@@ -57,11 +57,11 @@ def get_platform_info_with_phase(phase_id):
         for i in range(len(result)):
             temp.append(
                 {
-                    'platform_id': result[i][0],
+                    'platformId': result[i][0],
                     'desc': result[i][1],
-                    'start_time': result[i][2],
-                    'end_time': result[i][3],
-                    'pass_rate': result[i][4]
+                    'startTime': result[i][2],
+                    'endTime': result[i][3],
+                    'passRate': result[i][4]
                 }
             )
 
@@ -91,13 +91,12 @@ def add_platform(phase_id, pass_rate, desc):
         return 0
 
 
-def edit_platform(platform_id, phase_id, pass_rate, desc, start_time=None, end_time=None):
+def edit_platform(platform_id, pass_rate, desc, start_time=None, end_time=None):
     """
     编辑测试阶段细分记录
     :param end_time:
     :param start_time:
     :param platform_id:
-    :param phase_id:
     :param pass_rate:
     :param desc:
     :return:
@@ -112,12 +111,11 @@ def edit_platform(platform_id, phase_id, pass_rate, desc, start_time=None, end_t
         sql += " test_platform.end_time=%r," % end_time
 
     sql += """
-        test_platform.phase_id=%i, 
         test_platform.pass_rate=%.2f,
         test_platform.desc='%s'
         WHERE 
         id=%i;
-        """ % (phase_id, pass_rate, desc, platform_id)
+        """ % (pass_rate, desc, platform_id)
 
     status = db(sql)
     if status:

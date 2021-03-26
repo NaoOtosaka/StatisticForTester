@@ -6,6 +6,7 @@ from libs.project import *
 from libs.bug import *
 from libs.test import *
 from libs.test_platform import *
+from libs.platform_tag import *
 from tools.log import *
 from common.DateEncoder import DateEncoder
 
@@ -544,3 +545,54 @@ def delete_phase_platform_api():
         res = {'msg': '参数错误', 'status': 4001}
 
     return json.dumps(res, ensure_ascii=False)
+
+
+@project_api.route('/<path:project_id>/platform_tag', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def platform_tag(project_id):
+    if request.method == 'GET':
+        # 获取测试阶段平台基础信息
+        return show_platform_tag_api()
+    elif request.method == 'POST':
+        # 创建测试阶段平台分类
+        return add_platform_tag_api()
+    elif request.method == 'PUT':
+        # 编辑测试阶段平台分类
+        return edit_platform_tag_api()
+    elif request.method == 'DELETE':
+        # 删除测试阶段平台分类
+        return delete_platform_tag_api()
+
+
+def show_platform_tag_api():
+    pass
+
+
+def add_platform_tag_api():
+    """
+    创建细分类标签
+    :return:
+    """
+    project_id = int(request.values.get('projectId'))
+    tag_name = request.values.get('tagName')
+
+    logger.info(project_id)
+    logger.info(tag_name)
+
+    if project_id and tag_name:
+        status = add_platform_tag(project_id, tag_name)
+        if status:
+            res = {'msg': '成功', 'status': 1}
+        else:
+            res = {'msg': '系统错误', 'status': 500}
+    else:
+        res = {'msg': '参数错误', 'status': 4001}
+
+    return json.dumps(res, ensure_ascii=False)
+
+
+def edit_platform_tag_api():
+    pass
+
+
+def delete_platform_tag_api():
+    pass

@@ -438,13 +438,10 @@ def show_phase_platform_api(project_id):
     project_id = int(project_id)
     list_data = get_phase_list_with_project(project_id)
 
-    print(list_data)
-
     res_data = []
 
     try:
         for phase in list_data:
-            print(phase)
             platform_data = get_platform_info_with_phase(phase[0])
             res_data.append(
                 {
@@ -471,7 +468,6 @@ def add_phase_platform_api():
     """
     phase_id = int(request.values.get('phaseId'))
     pass_rate = float(request.values.get('passRate'))
-    print(pass_rate)
     desc = request.values.get('desc')
 
     logger.info(phase_id)
@@ -551,10 +547,10 @@ def delete_phase_platform_api():
 def platform_tag(project_id):
     if request.method == 'GET':
         # 获取测试阶段平台基础信息
-        return show_platform_tag_api()
+        return show_platform_tag_api(project_id)
     elif request.method == 'POST':
         # 创建测试阶段平台分类
-        return add_platform_tag_api()
+        return add_platform_tag_api(project_id)
     elif request.method == 'PUT':
         # 编辑测试阶段平台分类
         return edit_platform_tag_api()
@@ -563,20 +559,35 @@ def platform_tag(project_id):
         return delete_platform_tag_api()
 
 
-def show_platform_tag_api():
-    pass
-
-
-def add_platform_tag_api():
+def show_platform_tag_api(project_id):
     """
-    创建细分类标签
+    获取项目对应细分标签列表
+    :param project_id:
     :return:
     """
-    project_id = int(request.values.get('projectId'))
-    tag_name = request.values.get('tagName')
+    project_id = int(project_id)
 
-    logger.info(project_id)
-    logger.info(tag_name)
+    try:
+        tag_data = get_platform_tag_with_project_id(project_id)
+        res = {
+            'msg': '成功',
+            'data': tag_data,
+            'status': 1
+        }
+    except:
+        res = {'msg': '系统错误', 'status': 4001}
+
+    return json.dumps(res, ensure_ascii=False)
+
+
+def add_platform_tag_api(project_id):
+    """
+    创建细分类标签
+    :param project_id
+    :return:
+    """
+    project_id = int(project_id)
+    tag_name = request.values.get('tagName')
 
     if project_id and tag_name:
         status = add_platform_tag(project_id, tag_name)
@@ -591,8 +602,46 @@ def add_platform_tag_api():
 
 
 def edit_platform_tag_api():
-    pass
+    """
+    编辑细分类标签
+    :return:
+    """
+    tag_id = int(request.values.get('tagId'))
+    tag_name = request.values.get('tagName')
+
+    if tag_id and tag_name:
+        if check_platform_tag_with_id(tag_id):
+            status = edit_platform_tag(tag_id, tag_name)
+            # 状态码判断
+            if status:
+                res = {'msg': '成功', 'status': 1}
+            else:
+                res = {'msg': '系统错误', 'status': 500}
+        else:
+            res = {'msg': '项目不存在', 'status': 2001}
+    else:
+        res = {'msg': '参数错误', 'status': 4001}
+
+    return json.dumps(res, ensure_ascii=False)
 
 
 def delete_platform_tag_api():
-    pass
+    """
+    删除细分标签
+    :return:
+    """
+    # 接收入参
+    tag_id = int(request.values.get('tagId'))
+
+    if tag_id:
+        if check_platform_tag_with_id(tag_id):
+            if delete_platform_tag(tag_id):
+                res = {'msg': '成功', 'status': 1}
+            else:
+                res = {'msg': '系统错误', 'status': 500}
+        else:
+            res = {'msg': '记录不存在', 'status': 2001}
+    else:
+        res = {'msg': '参数错误', 'status': 4001}
+
+    return json.dumps(res, ensure_ascii=False)

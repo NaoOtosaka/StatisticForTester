@@ -13,7 +13,7 @@ def check_platform_with_id(platform_id):
     """
     sql = """
     SELECT 
-    id
+    1
     FROM
     test_platform
     WHERE

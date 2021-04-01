@@ -468,14 +468,15 @@ def add_phase_platform_api():
     """
     phase_id = int(request.values.get('phaseId'))
     pass_rate = float(request.values.get('passRate'))
-    desc = request.values.get('desc')
+    tag_id = int(request.values.get('tagId'))
+    # desc = request.values.get('desc')
 
     logger.info(phase_id)
     logger.info(pass_rate)
-    logger.info(desc)
+    logger.info(tag_id)
 
-    if phase_id and pass_rate and desc:
-        status = add_platform(phase_id, pass_rate, desc)
+    if phase_id and pass_rate and tag_id:
+        status = add_platform(phase_id, pass_rate, tag_id)
         if status:
             res = {'msg': '成功', 'status': 1}
         else:
@@ -492,6 +493,7 @@ def edit_phase_platform_api():
     :return:
     """
     platform_id = int(request.values.get('platformId'))
+    tag_id = int(request.values.get('tagId'))
     # phase_id = int(request.values.get('phaseId'))
     pass_rate = float(request.values.get('passRate'))
     desc = request.values.get('desc')
@@ -505,9 +507,9 @@ def edit_phase_platform_api():
     if end_time == 'null':
         end_time = None
 
-    if platform_id and pass_rate and desc:
+    if platform_id and pass_rate and tag_id:
         if check_platform_with_id(platform_id):
-            status = edit_platform(platform_id, pass_rate, desc, start_time=start_time, end_time=end_time)
+            status = edit_platform(platform_id, pass_rate, tag_id, start_time=start_time, end_time=end_time)
             # 状态码判断
             if status:
                 res = {'msg': '成功', 'status': 1}
@@ -643,5 +645,60 @@ def delete_platform_tag_api():
             res = {'msg': '记录不存在', 'status': 2001}
     else:
         res = {'msg': '参数错误', 'status': 4001}
+
+    return json.dumps(res, ensure_ascii=False)
+
+
+@project_api.route('/<path:project_id>/pass_rate', methods=['GET'])
+def pass_rate_statistics(project_id):
+    """
+    根据项目获取每个项目阶段BUG类型数
+    :return:
+    """
+    if project_id:
+        project_id = int(project_id)
+        # 初始化数据列表
+        tag_list = []
+        plan_list = []
+        data_temp = {}
+
+        # 获取项目标签列表
+        tag_temp = get_platform_tag_with_project_id(project_id)
+        for value in tag_temp:
+            tag_list.append(value['tagName'])
+            data_temp[value['tagName']] = {}
+
+        # 获取项目对应阶段列表
+        phase_temp = get_phase_info_with_project(project_id)
+        for value in phase_temp:
+            plan_list.append(value['name'])
+            for tag in tag_list:
+                data_temp[tag][value['name']] = 0
+
+        statistic_data = get_pass_rate_statistic_with_project(project_id)
+
+        for value in statistic_data:
+            data_temp[value['tagName']][value['planName']] = value['passRate']
+
+        # 废弃
+        # for tag_data in tag_temp:
+        #     for phase_data in phase_temp:
+        #         phase_id = phase_data['phaseId']
+        #         pass_rate = get_platform_info_with_phase(phase_id)
+        #         data_temp[tag_data['tagName']][phase_data['name']] = pass_rate
+
+        res_temp = {
+            'planList': plan_list,
+            'tagList': tag_list,
+            'data': data_temp
+        }
+
+        res = {
+            'msg': '成功',
+            'data': res_temp,
+            'status': 1
+        }
+    else:
+        res = {'msg': '无相关统计信息', 'status': 2001}
 
     return json.dumps(res, ensure_ascii=False)

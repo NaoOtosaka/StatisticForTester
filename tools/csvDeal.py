@@ -159,7 +159,7 @@ def get_phase_info(project, plan, category, lock):
     plan_id = int(process_plan(plan))
 
     # 加锁
-    lock.acquire(timeout=10)
+    lock.acquire(timeout=30)
     try:
         temp = get_plan_with_project_and_plan(project_id, plan_id)
 
@@ -282,7 +282,7 @@ def process_project(project, category, lock):
     category_id = process_project_category(category)
 
     # 加锁
-    lock.acquire(timeout=20)
+    lock.acquire(timeout=30)
     try:
         project_id = check_project_with_name(project)
         # print(project_id)
@@ -322,7 +322,7 @@ def process_tester(tester, lock):
     tester_email = ''
 
     # 加锁
-    lock.acquire(timeout=20)
+    lock.acquire(timeout=30)
     try:
         tester_id = check_tester_with_name(tester)
         if not tester_id:
@@ -346,7 +346,7 @@ def process_developer(developer, lock):
     developer_email = ''
 
     # 加锁
-    lock.acquire(timeout=10)
+    lock.acquire(timeout=30)
     try:
         developer_id = check_developer_with_name(developer)
         if not developer_id:

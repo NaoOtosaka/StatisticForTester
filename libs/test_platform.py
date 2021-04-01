@@ -37,6 +37,8 @@ def get_platform_info_with_phase(phase_id):
     sql = """
     SELECT
     test_platform.id,
+    platform_tag.tag_id,
+    platform_tag.tag_name,
     test_platform.desc,
     test_platform.start_time,
     test_platform.end_time,
@@ -44,6 +46,7 @@ def get_platform_info_with_phase(phase_id):
     FROM
     test_platform
     INNER JOIN project_phases ON test_platform.phase_id = project_phases.phase_id
+    INNER JOIN platform_tag ON test_platform.tag_id = platform_tag.tag_id
     WHERE
     test_platform.phase_id = %i
     """ % phase_id
@@ -58,10 +61,12 @@ def get_platform_info_with_phase(phase_id):
             temp.append(
                 {
                     'platformId': result[i][0],
-                    'desc': result[i][1],
-                    'startTime': result[i][2],
-                    'endTime': result[i][3],
-                    'passRate': result[i][4]
+                    'tagId': result[i][1],
+                    'tagName': result[i][2],
+                    'desc': result[i][3],
+                    'startTime': result[i][4],
+                    'endTime': result[i][5],
+                    'passRate': result[i][6]
                 }
             )
 
@@ -70,19 +75,19 @@ def get_platform_info_with_phase(phase_id):
         return []
 
 
-def add_platform(phase_id, pass_rate, desc):
+def add_platform(phase_id, pass_rate, tag_id):
     """
     创建测试阶段细分记录
     :param phase_id:
     :param pass_rate:
-    :param desc:
+    :param tag_id:
     :return:
     """
     sql = """
-    INSERT INTO `test_platform`(test_platform.phase_id, test_platform.pass_rate, test_platform.desc)
+    INSERT INTO `test_platform`(test_platform.phase_id, test_platform.pass_rate, test_platform.tag_id)
     VALUES
-        ( %i, %.2f, '%s');
-    """ % (phase_id, pass_rate, desc)
+        ( %i, %.2f, %i);
+    """ % (phase_id, pass_rate, tag_id)
 
     status = db(sql)
     if status:
@@ -91,14 +96,14 @@ def add_platform(phase_id, pass_rate, desc):
         return 0
 
 
-def edit_platform(platform_id, pass_rate, desc, start_time=None, end_time=None):
+def edit_platform(platform_id, pass_rate, tag_id, start_time=None, end_time=None):
     """
     编辑测试阶段细分记录
     :param end_time:
     :param start_time:
     :param platform_id:
     :param pass_rate:
-    :param desc:
+    :param tag_id:
     :return:
     """
     sql = """
@@ -112,10 +117,10 @@ def edit_platform(platform_id, pass_rate, desc, start_time=None, end_time=None):
 
     sql += """
         test_platform.pass_rate=%.2f,
-        test_platform.desc='%s'
+        test_platform.tag_id=%i
         WHERE 
         id=%i;
-        """ % (pass_rate, desc, platform_id)
+        """ % (pass_rate, tag_id, platform_id)
 
     status = db(sql)
     if status:
@@ -143,3 +148,43 @@ def delete_platform(platform_id):
         return 1
     else:
         return 0
+
+
+def get_pass_rate_statistic_with_project(project_id):
+    """
+    获取项目对应的通过率统计信息
+    :param project_id:
+    :return:
+    """
+    sql = """
+    SELECT
+    platform_tag.tag_name,
+    test_plan.plan_name,
+    test_platform.pass_rate
+    FROM
+    test_platform
+    INNER JOIN platform_tag ON test_platform.tag_id = platform_tag.tag_id
+    INNER JOIN project_phases ON test_platform.phase_id = project_phases.phase_id
+    INNER JOIN test_plan ON project_phases.plan_id = test_plan.plan_id
+    WHERE
+    project_phases.project_id = %i
+    """ % project_id
+
+    temp = []
+
+    result = db(sql)
+    if result:
+        logger.debug(result)
+
+        for i in range(len(result)):
+            temp.append(
+                {
+                    'tagName': result[i][0],
+                    'planName': result[i][1],
+                    'passRate': result[i][2]
+                }
+            )
+
+        return temp
+    else:
+        return []

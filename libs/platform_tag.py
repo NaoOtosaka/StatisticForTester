@@ -29,6 +29,29 @@ def check_platform_tag_with_id(tag_id):
         return 0
 
 
+def get_tag_info_with_id(tag_id):
+    """
+    根据tag ID获取对应tag信息
+    :param tag_id:
+    :return:
+    """
+    sql = """
+    SELECT
+    platform_tag.tag_name
+    FROM
+    platform_tag
+    WHERE
+    platform_tag.tag_id = %i
+    """ % tag_id
+
+    result = db(sql)
+    if result:
+        logger.debug(result)
+        return result[0][0]
+    else:
+        return 0
+
+
 def get_platform_tag_with_project_id(project_id):
     """
     根据项目id获取对应tag列表
@@ -62,7 +85,6 @@ def get_platform_tag_with_project_id(project_id):
         return temp
     else:
         return []
-
 
 
 def add_platform_tag(project_id, tag_name):

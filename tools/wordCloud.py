@@ -3,44 +3,18 @@ import base64
 import io
 
 from config import CONF
-from tools.database import db
+from libs.bug import get_model_data_with_project
 
 
-def get_model_data(project_id=None):
-    """
-    获取异常分类模块数据
-    :return:
-    """
-    sql = """
-    SELECT
-    bug.model
-    FROM
-    bug
-    INNER JOIN project_phases ON bug.phase_id = project_phases.phase_id
-    INNER JOIN project ON project_phases.project_id = project.project_id
-    """
+def count_model(str_list):
+    str_set = set(str_list)
 
-    if project_id:
-        sql += "WHERE project.project_id = %i" % project_id
+    count_data = {}
 
-    temp = []
-
-    result = db(sql)
-    if result:
-        for value in result:
-            if "-" in value[0]:
-                list_temp = value[0].split('-')
-                temp.append(list_temp[1:])
-
-    return temp
-
-
-def trans_CN(text):
-    temp = ""
-    for item in text:
-        temp += item[0] + " "
-
-    return temp
+    for item in str_set:
+        count_data[item] = str_list.count(item)
+    temp = sorted(count_data.items(), key=lambda kv: (kv[1], kv[0]), reverse=True)
+    print(temp)
 
 
 def get_wordcloud_with_project(project_id=None):
@@ -48,24 +22,32 @@ def get_wordcloud_with_project(project_id=None):
     获取词云
     :return:
     """
+    # 字体文件路径
     font = CONF.TTF_PATH + 'msyh.ttc'
-    # pil_img = WordCloud(width=500, height=500, font_path=font).generate(text=text).to_image()
 
-    str_list = get_model_data(project_id)
+    # 源数据处理(模块名称)
+    str_list = get_model_data_with_project(project_id)
 
-    text = trans_CN(str_list)
+    # 分词
+    text = ""
+    for item in str_list:
+        text += item + " "
 
+    # 生成词云
     pil_img = WordCloud(
         font_path=font,
         width=800,
         height=300,
         background_color="white",
-        prefer_horizontal=0.6).generate(text=text).to_image()
+        prefer_horizontal=0.6,
+        collocations=False).generate(text=text).to_image()
+
+    # base64输出
     img = io.BytesIO()
     pil_img.save(img, "PNG")
     img.seek(0)
     img_base64 = base64.b64encode(img.getvalue()).decode()
-    # print(img_base64)
+
     return img_base64
 
 

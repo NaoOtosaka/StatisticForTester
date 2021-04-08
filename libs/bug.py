@@ -527,3 +527,31 @@ def edit_bug_category(kb_id, category):
     else:
         return 0
 
+
+def get_model_data_with_project(project_id=None):
+    """
+    获取异常分类模块数据
+    :return:
+    """
+    sql = """
+    SELECT
+    bug.model
+    FROM
+    bug
+    INNER JOIN project_phases ON bug.phase_id = project_phases.phase_id
+    INNER JOIN project ON project_phases.project_id = project.project_id
+    """
+
+    if project_id:
+        sql += "WHERE project.project_id = %i" % project_id
+
+    temp = []
+
+    result = db(sql)
+    if result:
+        for value in result:
+            if "-" in value[0]:
+                list_temp = value[0].split('-')
+                temp += list_temp[1:]
+
+    return temp

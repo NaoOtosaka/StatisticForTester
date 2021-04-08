@@ -680,13 +680,6 @@ def pass_rate_statistics(project_id):
         for value in statistic_data:
             data_temp[value['tagName']][value['planName']] = value['passRate']
 
-        # 废弃
-        # for tag_data in tag_temp:
-        #     for phase_data in phase_temp:
-        #         phase_id = phase_data['phaseId']
-        #         pass_rate = get_platform_info_with_phase(phase_id)
-        #         data_temp[tag_data['tagName']][phase_data['name']] = pass_rate
-
         res_temp = {
             'planList': plan_list,
             'tagList': tag_list,
@@ -700,5 +693,48 @@ def pass_rate_statistics(project_id):
         }
     else:
         res = {'msg': '无相关统计信息', 'status': 2001}
+
+    return json.dumps(res, ensure_ascii=False)
+
+
+@project_api.route('/<path:project_id>/model_count')
+def model_count(project_id):
+    """
+    获取项目对应异常模块统计信息
+    :param project_id:
+    :return:
+    """
+    if project_id:
+        project_id = int(project_id)
+
+        # 获取模块数据
+        model_data = get_model_data_with_project(project_id)
+
+        # 筛选唯一项
+        str_set = set(model_data)
+
+        # 排序
+        count_data = {}
+        res_temp = []
+        for item in str_set:
+            count_data[item] = model_data.count(item)
+        count_data_desc = dict(sorted(count_data.items(), key=lambda kv: kv[1], reverse=True))
+
+        for key, value in count_data_desc.items():
+            res_temp.append({
+                'model': key,
+                'count': value
+            })
+
+        res = {
+            'msg': '成功',
+            'data': res_temp,
+            'status': 1
+        }
+    else:
+        res = {
+            'msg': '系统错误',
+            'status': 4001
+        }
 
     return json.dumps(res, ensure_ascii=False)

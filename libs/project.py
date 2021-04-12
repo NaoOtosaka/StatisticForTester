@@ -198,7 +198,8 @@ def get_phase_list_with_project(project_id):
     INNER JOIN project_phases ON project_phases.project_id = project.project_id
     INNER JOIN test_plan ON project_phases.plan_id = test_plan.plan_id
     WHERE
-    project.project_id = %i
+    project.project_id = %i AND
+    test_plan.plan_name != '兼容性测试'
     ORDER BY
     test_plan.plan_id ASC
 

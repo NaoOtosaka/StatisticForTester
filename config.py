@@ -56,7 +56,8 @@ class Config(object):
             "前端开发": 5,
             "服务端开发": 6,
             "Android开发": 7,
-            "iOS开发": 8
+            "iOS开发": 8,
+            "Flutter BUG": 9
         }
         bug_category = {
             "未选定": 1,

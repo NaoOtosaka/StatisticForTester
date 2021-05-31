@@ -366,7 +366,6 @@ def process_time(time_str):
     :return:
     """
     logger.debug(time_str)
-    print(time_str)
     time_array = time.strptime(time_str, "%Y/%m/%d %H:%M")
     timestamp = int(time.mktime(time_array))
     logger.info(timestamp)

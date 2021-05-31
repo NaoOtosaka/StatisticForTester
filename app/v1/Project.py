@@ -671,9 +671,10 @@ def pass_rate_statistics(project_id):
         # 获取项目对应阶段列表
         phase_temp = get_phase_info_with_project(project_id)
         for value in phase_temp:
-            plan_list.append(value['name'])
-            for tag in tag_list:
-                data_temp[tag][value['name']] = 0
+            if not value == "兼容性测试":
+                plan_list.append(value['name'])
+                for tag in tag_list:
+                    data_temp[tag][value['name']] = 0
 
         statistic_data = get_pass_rate_statistic_with_project(project_id)
 

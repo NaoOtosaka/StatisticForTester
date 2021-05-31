@@ -366,7 +366,10 @@ def process_time(time_str):
     :return:
     """
     logger.debug(time_str)
-    time_array = time.strptime(time_str, "%Y/%m/%d %H:%M")
+    try:
+        time_array = time.strptime(time_str, "%Y/%m/%d %H:%M")
+    except:
+        time_array = time.strptime(time_str, "%Y-%m-%d %H:%M")
     timestamp = int(time.mktime(time_array))
     logger.info(timestamp)
     return timestamp
@@ -379,7 +382,10 @@ def process_close_time(time_str):
     :return:
     """
     logger.debug(time_str)
-    time_array = time.strptime(time_str, "%Y/%m/%d")
+    try:
+        time_array = time.strptime(time_str, "%Y/%m/%d")
+    except:
+        time_array = time.strptime(time_str, "%Y-%m-%d")
     timestamp = int(time.mktime(time_array))
     logger.info(timestamp)
     return timestamp

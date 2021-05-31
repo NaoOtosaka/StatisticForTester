@@ -668,10 +668,13 @@ def pass_rate_statistics(project_id):
             tag_list.append(value['tagName'])
             data_temp[value['tagName']] = {}
 
+        # 初始化允许显示阶段列表
+        show_plan_list = ['冒烟复核', '一轮测试', '二轮测试', '回归测试']
+
         # 获取项目对应阶段列表
         phase_temp = get_phase_info_with_project(project_id)
         for value in phase_temp:
-            if not value == "兼容性测试":
+            if value['name'] in show_plan_list:
                 plan_list.append(value['name'])
                 for tag in tag_list:
                     data_temp[tag][value['name']] = 0
